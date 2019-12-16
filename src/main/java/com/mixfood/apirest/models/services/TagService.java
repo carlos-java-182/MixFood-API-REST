@@ -4,15 +4,15 @@ import java.util.List;
 
 import com.mixfood.apirest.entity.Tag;
 
-public interface ITagService 
+public interface TagService
 {
 	public List<Tag> findAll();
 	
-	public Tag findById(Long id);
+	public Tag findById(int id);
 	
 	public Tag save(Tag tag);
 	
-	public void delete(Long id);
+	public void delete(int id);
 	
 	
 }

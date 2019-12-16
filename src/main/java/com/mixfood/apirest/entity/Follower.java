@@ -5,33 +5,36 @@ import java.util.Date;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "favorites")
-public class Favorite 
+@Table(name ="followers")
+public class Follower
 {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "idFavorite")
+	@Column(name="idFollower")
 	private int id;
+	
 	@Temporal(TemporalType.DATE)
 	private Date createAt;
-	@PrePersist
 	public void prePersist()
 	{
 		createAt = new Date();
 	}
 	@Temporal(TemporalType.DATE)
 	private Date updateAt;
-	
-	//*Relationship one to one to user
+
+	/*
+	*Relationships
+	 */
+
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "user_id", nullable = false)
-	@OneToOne(cascade = CascadeType.ALL)
 	private User user;
+
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "follower_id", nullable = false)
+	private User follower;
+
+
 	
-	//*Relationship one to one to recipe
-	@JoinColumn(name = "recipe_id", nullable = false)
-	@OneToOne(cascade = CascadeType.ALL)
-	private Recipe recipe;
-	
-	
-	
+
 }

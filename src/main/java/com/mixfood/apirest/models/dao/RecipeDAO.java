@@ -1,5 +1,9 @@
 package com.mixfood.apirest.models.dao;
 
-public class RecipeDAO {
+import com.mixfood.apirest.entity.Recipe;
+import org.springframework.data.repository.CrudRepository;
+
+public interface RecipeDAO extends CrudRepository<Recipe,Integer>
+{
 
 }

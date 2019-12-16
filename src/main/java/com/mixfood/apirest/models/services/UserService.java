@@ -19,6 +19,7 @@ public interface UserService
     //*
     public boolean authisValid(String email, String password);
     //*
-    
+   // public loadUserByUsername(String username);
+
 
 }

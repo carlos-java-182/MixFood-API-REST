@@ -32,33 +32,77 @@ public class Tag implements Serializable
 	//*Column name
 	@Column(name="idTag")
 	private int id;
-
 	@NotEmpty
-	//*Colum size
+	//*Column size
 	@Size(max = 45)
 	@Column(nullable = false, unique = true)
 	private String name;
+	@Column(nullable = false)
+	private String thumbRoute;
 	@Column(name="create_at", nullable = false)
+	@Temporal(TemporalType.DATE)
 	private Date createAt;
+	@PrePersist
+	public void prePersist()
+	{
+		createAt = new Date();
+	}
 	@Column(name="update_at")
 	@Temporal(TemporalType.DATE)
 	private Date updateAt;
 	
-	/*@PrePersist
-	public void prePersist()
-	{
-		updateAt = new Date();
-	}*/
+
 	
 	//*Create aux table for relationship many to many to recipes
 	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinTable(
-			name = "Recipes_Tags",
-			joinColumns = { @JoinColumn(name="recipes_id") },
-			inverseJoinColumns = { @JoinColumn(name="tags_id") }
-			)
 	private List<Recipe> recipes = new ArrayList<>();
 
+	//*Getters and setters
+	public int getId() {
+		return id;
+	}
 
+	public void setId(int id) {
+		this.id = id;
+	}
 
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getThumbRoute() {
+		return thumbRoute;
+	}
+
+	public void setThumbRoute(String thumbRoute) {
+		this.thumbRoute = thumbRoute;
+	}
+
+	public Date getCreateAt() {
+		return createAt;
+	}
+
+	public void setCreateAt(Date createAt) {
+		this.createAt = createAt;
+	}
+
+	public Date getUpdateAt() {
+		return updateAt;
+	}
+
+	public void setUpdateAt(Date updateAt) {
+		this.updateAt = updateAt;
+	}
+
+	public List<Recipe> getRecipes() {
+		return recipes;
+	}
+
+	public void setRecipes(List<Recipe> recipes) {
+		this.recipes = recipes;
+	}
 }

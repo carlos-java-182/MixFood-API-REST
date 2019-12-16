@@ -8,13 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.mixfood.apirest.entity.Tag;
-import com.mixfood.apirest.models.dao.ITagDao;
+import com.mixfood.apirest.models.dao.TagDao;
 
 @Service
-public class TagServiceImpl implements ITagService
+public class TagServiceImpl implements TagService
 {
 	@Autowired
-	private ITagDao tagDao;
+	private TagDao tagDao;
 
 	@Override
 	@Transactional(readOnly = true)
@@ -24,25 +24,22 @@ public class TagServiceImpl implements ITagService
 	}
 
 	@Override
-	@Transactional(readOnly = true)
-	public Tag findById(Long id)
+	public Tag findById(int id)
 	{
 		 return tagDao.findById(id).orElse(null);
 	}
 
 	@Override
-	@Transactional
+
 	public Tag save(Tag tag) 
 	{
 		return tagDao.save(tag);
 	}
 
 	@Override
-	@Transactional
-	public void delete(Long id) 
+	public void delete(int id)
 	{
 		tagDao.deleteById(id);
-		
 	}
 	
 
