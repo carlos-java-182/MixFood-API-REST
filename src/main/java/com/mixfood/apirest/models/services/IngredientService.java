@@ -13,5 +13,4 @@ public interface IngredientService {
     public Ingredient save(Ingredient ingredient);
     //*
     public void delete(int id);
-
 }

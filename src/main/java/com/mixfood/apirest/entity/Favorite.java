@@ -24,14 +24,51 @@ public class Favorite
 	
 	//*Relationship one to one to user
 	@JoinColumn(name = "user_id", nullable = false)
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne
 	private User user;
 	
 	//*Relationship one to one to recipe
 	@JoinColumn(name = "recipe_id", nullable = false)
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne
 	private Recipe recipe;
-	
-	
-	
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public Date getCreateAt() {
+		return createAt;
+	}
+
+	public void setCreateAt(Date createAt) {
+		this.createAt = createAt;
+	}
+
+	public Date getUpdateAt() {
+		return updateAt;
+	}
+
+	public void setUpdateAt(Date updateAt) {
+		this.updateAt = updateAt;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public Recipe getRecipe() {
+		return recipe;
+	}
+
+	public void setRecipe(Recipe recipe) {
+		this.recipe = recipe;
+	}
 }

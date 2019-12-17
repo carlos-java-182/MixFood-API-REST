@@ -71,5 +71,11 @@ public class Category
 		this.updateAt = updateAt;
 	}
 
+	/*public List<Recipe> getRecipes() {
+		return recipes;
+	}
 
+	public void setRecipes(List<Recipe> recipes) {
+		this.recipes = recipes;
+	}*/
 }

@@ -90,6 +90,11 @@ public class Recipe
 	@JoinColumn(name = "recipe_id")
 	private List<Image> images = new ArrayList<Image>();
 
+	//*
+	@OneToMany(fetch = FetchType.LAZY)
+	@JoinColumn(name = "recipe_id")
+	private List<Ranking> rankings = new ArrayList<>();
+
 
 //	@ManyToMany(cascade = CascadeType.ALL, mappedBy = "recipes")
 

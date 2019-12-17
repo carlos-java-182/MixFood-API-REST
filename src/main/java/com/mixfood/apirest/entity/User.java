@@ -38,13 +38,14 @@ public class User implements Serializable
 	@Column(nullable = false, unique = true)
 	private String email;
 	@NotEmpty
+	@Column(length = 60)
 	private String password;
 	@NotEmpty
 	@Size(max = 2)
 	@Column(nullable = false)
 	private String age;
 	@NotEmpty
-	private String sex;
+	private String gender;
   //  @Enumerated(EnumType.STRING)
 	private String status;
 	@NotEmpty
@@ -57,7 +58,7 @@ public class User implements Serializable
 	//@NotEmpty
 	@Size(max = 200)
 	private String token;
-    @Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.DATE)
 	private Date createAt;
 	@PrePersist
 	public void prePersist()
@@ -132,12 +133,12 @@ public class User implements Serializable
 		this.age = age;
 	}
 
-	public String getSex() {
-		return sex;
+	public String getGender() {
+		return gender;
 	}
 
-	public void setSex(String sex) {
-		this.sex = sex;
+	public void setGender(String gender) {
+		this.gender = gender;
 	}
 
 	public String getStatus() {

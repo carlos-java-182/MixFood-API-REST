@@ -1,5 +1,10 @@
 package com.mixfood.apirest.controllers;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,18 +18,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.mixfood.apirest.entity.User;
 import com.mixfood.apirest.models.services.UserService;
+import org.springframework.web.multipart.MultipartFile;
 
 //*Set cross origin for angular server
 @CrossOrigin(origins = {"http://localhost:4200"})
@@ -164,7 +162,7 @@ public class UserRestController
 			actualUser.setStatus(user.getStatus());
 			actualUser.setDescription(user.getDescription());
 			actualUser.setPorfileimageRoute(user.getPorfileimageRoute());
-			actualUser.setSex(user.getSex());
+			actualUser.setGender(user.getGender());
 		
 			//*Update user
 			updatedUser = userService.save(actualUser);
@@ -207,5 +205,36 @@ public class UserRestController
 		//*Return response delete success
 		response.put("message", "The user has been removed!");
 		return new ResponseEntity<Map<String,Object>>(response,HttpStatus.OK);	
+	}
+
+	//*Url route
+	@PostMapping("users/upload")
+	/**
+	 *
+	 */
+	public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile file, @RequestParam("id") int id)
+	{
+		//*Object declaration
+		Map<String,Object> response = new HashMap<>();
+		User user = userService.findById(id);
+		if (!file.isEmpty())
+		{
+			String fileName = file.getOriginalFilename();
+			Path routeFile = Paths.get("uploads/users").resolve(fileName).toAbsolutePath();
+			try {
+				Files.copy(file.getInputStream(),routeFile);
+			} catch (IOException e) {
+				//*Response database error
+				response.put("message","Error updating image from database!");
+				response.put("error",e.getMessage().concat(" : ").concat(e.getCause().getMessage()));
+				return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+			//*Set photo to user
+
+			//*Update user
+			response.put("user",user);
+			response.put("message","upload success!");
+		}
+		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
 	}
 }

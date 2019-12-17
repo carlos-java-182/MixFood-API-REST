@@ -21,3 +21,9 @@ INSERT INTO tags (name,thumb_route,create_at) VALUES('mota','ruta','2012-12-12')
 
 #Insert images
 INSERT INTO images (`create_at`, `route_image`, `recipe_id`) VALUES ( '2019-12-12', 'routesss', 1);
+
+#Insert Favorites
+INSERT INTO favorites (`id_favorite`, `create_at`, `recipe_id`, `user_id`) VALUES ('0', '2019-12-12', 1, 1);
+
+#Insert Followers
+INSERT INTO followers (`id_follower`, `create_at`, `follower_id`, `user_id`) VALUES ('0', '2019-12-12', '2', '1');
