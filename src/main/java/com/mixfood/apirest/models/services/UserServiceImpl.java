@@ -2,12 +2,15 @@ package com.mixfood.apirest.models.services;
 
 import java.util.List;
 
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.mixfood.apirest.entity.User;
 import com.mixfood.apirest.models.dao.UserDAO;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -54,5 +57,8 @@ public class UserServiceImpl implements UserService
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+
+
 
 }

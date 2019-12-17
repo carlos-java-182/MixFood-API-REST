@@ -84,6 +84,10 @@ public class User implements Serializable
 	@JoinColumn(name = "follower_id")
 	private List<Follower> followers = new ArrayList<>();
 
+	//*Relationship many to one to categories
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "role_id",nullable = false)
+	private Role role;
 	//*Getters and Setters
 	public int getId() {
 		return id;

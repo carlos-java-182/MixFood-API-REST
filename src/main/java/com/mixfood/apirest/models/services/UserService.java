@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.mixfood.apirest.entity.User;
 
-public interface UserService 
+public interface UserService
 {
 	//*
 	public List<User> findAll();
@@ -19,6 +19,7 @@ public interface UserService
     //*
     public boolean authisValid(String email, String password);
     //*
+   // public User findByEmail(String email);
    // public loadUserByUsername(String username);
 
 
