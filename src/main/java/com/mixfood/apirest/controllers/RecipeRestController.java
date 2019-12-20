@@ -41,6 +41,13 @@ public class RecipeRestController
     }
 
     //*Url route
+    @GetMapping("/recipes/cards")
+    public List<Object> indexCards()
+    {
+        return recipeService.findAllForCards();
+    }
+
+    //*Url route
     @PostMapping("/recipes")
     public ResponseEntity<?> create(@Valid @RequestBody Recipe recipe, BindingResult result)
     {

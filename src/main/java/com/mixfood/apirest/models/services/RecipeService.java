@@ -10,4 +10,6 @@ public interface RecipeService
     public Recipe findById(int id);
     public Recipe save(Recipe recipe);
     public void delete(int id);
+    public List<Object> findAllForCards();
+
 }

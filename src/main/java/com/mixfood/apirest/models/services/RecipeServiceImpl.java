@@ -35,4 +35,9 @@ public class RecipeServiceImpl implements  RecipeService
     public void delete(int id) {
         recipeDAO.deleteById(id);
     }
+
+    @Override
+    public List<Object> findAllForCards() {
+        return recipeDAO.findAllForCards();
+    }
 }
