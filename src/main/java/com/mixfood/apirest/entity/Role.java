@@ -10,13 +10,17 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idRole")
     private int id;
-
-    private String type;
+    @Enumerated(EnumType.STRING)
+    private Type type;
 
     @Temporal(TemporalType.DATE)
     private Date createAt;
     @Temporal(TemporalType.DATE)
     private Date updateAt;
 
+    public enum Type{
+        USER,
+        ADMIN
+    }
 
 }
