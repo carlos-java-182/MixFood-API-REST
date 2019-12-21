@@ -1,6 +1,7 @@
 package com.mixfood.apirest.models.services;
 
 import com.mixfood.apirest.entity.Category;
+import com.mixfood.apirest.projections.CategoryCard;
 
 import java.util.List;
 
@@ -10,4 +11,5 @@ public interface CategoryService
     public Category findById(int id);
     public Category save(Category category);
     public void delete(int id);
+    public List<CategoryCard> findAllForCards();
 }

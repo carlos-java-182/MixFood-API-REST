@@ -41,6 +41,8 @@ public class Recipe
 	private String status;
 	private int averangeRanking;
 	private String dificult;
+	private String thumbRoute;
+	private long views;
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createAt;
 	@PrePersist
@@ -227,6 +229,22 @@ public class Recipe
 
 	public void setImages(List<Image> images) {
 		this.images = images;
+	}
+
+	public String getThumbRoute() {
+		return thumbRoute;
+	}
+
+	public void setThumbRoute(String thumbRoute) {
+		this.thumbRoute = thumbRoute;
+	}
+
+	public long getViews() {
+		return views;
+	}
+
+	public void setViews(long views) {
+		this.views = views;
 	}
 }
 

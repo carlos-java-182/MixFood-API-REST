@@ -4,6 +4,7 @@ import com.mixfood.apirest.entity.Recipe;
 import com.mixfood.apirest.entity.User;
 import com.mixfood.apirest.models.services.RecipeService;
 import com.mixfood.apirest.models.services.UserService;
+import com.mixfood.apirest.projections.RecipeCard;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -42,7 +43,7 @@ public class RecipeRestController
 
     //*Url route
     @GetMapping("/recipes/cards")
-    public List<Object> indexCards()
+    public List<RecipeCard> indexCards()
     {
         return recipeService.findAllForCards();
     }
@@ -91,6 +92,39 @@ public class RecipeRestController
         //*Created user response
         response.put("message", "The recipe has been created");
        // response.put("recipe", recipe);
+        return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
+    }
+
+    //*Url route
+    @PutMapping("/recipes/views/{id}")
+    public ResponseEntity<?> updateView( @PathVariable int id)
+    {
+        //*Find tag
+        Recipe actualRecipe = recipeService.findById(id);
+
+        //*Create objects
+        Recipe updatedRecipe = null;
+        Map<String,Object> response = new HashMap<>();
+
+        try
+        {
+            //*Add view
+            actualRecipe.setViews(actualRecipe.getViews() + 1);
+            //*Update user
+            updatedRecipe = recipeService.save(actualRecipe);
+        }
+        catch(DataAccessException e)
+        {
+            //*Response database error
+            response.put("message","Error updating view in database!");
+            response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+            //*Return response and http status
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        //*Add success response to map
+        response.put("message", "The views has been updated!");
+        //*Return response
         return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
     }
 

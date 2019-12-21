@@ -39,6 +39,7 @@ public class Tag implements Serializable
 	private String name;
 	@Column(nullable = false)
 	private String thumbRoute;
+	private int mentions;
 	@Column(name="create_at", nullable = false)
 	@Temporal(TemporalType.DATE)
 	private Date createAt;
@@ -104,5 +105,13 @@ public class Tag implements Serializable
 
 	public void setRecipes(List<Recipe> recipes) {
 		this.recipes = recipes;
+	}
+
+	public int getMentions() {
+		return mentions;
+	}
+
+	public void setMentions(int mentions) {
+		this.mentions = mentions;
 	}
 }

@@ -111,7 +111,7 @@ public class TagRestController
 	@PutMapping("/tags/{id}")
 	public ResponseEntity<?> update(@Valid @RequestBody Tag tag, BindingResult result, @PathVariable int id)
 	{
-		//*Find user
+		//*Find tag
 		Tag actualTag = tagService.findById(id);
 		//*Create objects
 		Tag updatedTag = null;
@@ -134,7 +134,7 @@ public class TagRestController
 			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
 		}
 
-		//*Validate if user does exist
+		//*Validate if tag does exist
 		if(tag == null)
 		{
 			//*Add message to map
@@ -145,7 +145,7 @@ public class TagRestController
 
 		try
 		{
-			//*Add new user data to actual user
+			//*Add new tag data to actual tag
 		//	actualTag.setId(tag.getId());
 			actualTag.setName(tag.getName());
 			actualTag.setThumbRoute(tag.getThumbRoute());
@@ -168,6 +168,40 @@ public class TagRestController
 		response.put("tag", updatedTag);
 		//*Return response
 		return new ResponseEntity<Tag>(updatedTag,HttpStatus.CREATED);
+	}
+
+	//*Url route
+	@PutMapping("/tags/mention/{id}")
+	public ResponseEntity<?> updateMention( @PathVariable int id)
+	{
+		//*Find tag
+		Tag actualTag = tagService.findById(id);
+
+		//*Create objects
+		Tag updatedTag = null;
+		Map<String,Object> response = new HashMap<>();
+
+		try
+		{
+			//*Add mention
+			actualTag.setMentions(actualTag.getMentions() + 1);
+			//*Update user
+			updatedTag = tagService.save(actualTag);
+		}
+		catch(DataAccessException e)
+		{
+			//*Response database error
+			response.put("message","Error updating tag in database!");
+			response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+			//*Return response and http status
+			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		//*Add success response to map
+		response.put("message", "The mentions has been updated!");
+		//response.put("tag", updatedTag);
+		//*Return response
+		return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
 	}
 
 	//*Url route

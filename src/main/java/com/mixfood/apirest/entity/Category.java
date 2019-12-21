@@ -20,6 +20,8 @@ public class Category
 	@Size(max = 45)
 	@Column(nullable = false, unique = true)
 	private String name;
+	private String thumbRoute;
+	private long amountRecipes;
 	@Temporal(TemporalType.DATE)
 	private Date createAt;
 	@PrePersist
@@ -69,6 +71,14 @@ public class Category
 
 	public void setUpdateAt(Date updateAt) {
 		this.updateAt = updateAt;
+	}
+
+	public long getAmountRecipes() {
+		return amountRecipes;
+	}
+
+	public void setAmountRecipes(long amountRecipes) {
+		this.amountRecipes = amountRecipes;
 	}
 
 	/*public List<Recipe> getRecipes() {

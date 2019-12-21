@@ -2,6 +2,7 @@ package com.mixfood.apirest.models.services;
 
 import com.mixfood.apirest.entity.Recipe;
 import com.mixfood.apirest.models.dao.RecipeDAO;
+import com.mixfood.apirest.projections.RecipeCard;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,7 +38,7 @@ public class RecipeServiceImpl implements  RecipeService
     }
 
     @Override
-    public List<Object> findAllForCards() {
+    public List<RecipeCard> findAllForCards() {
         return recipeDAO.findAllForCards();
     }
 }
