@@ -5,6 +5,7 @@ import com.mixfood.apirest.entity.User;
 import com.mixfood.apirest.models.services.RecipeService;
 import com.mixfood.apirest.models.services.UserService;
 import com.mixfood.apirest.projections.RecipeCard;
+import com.mixfood.apirest.projections.RecipeSearch;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -41,6 +42,12 @@ public class RecipeRestController
         return recipeService.findAll();
     }
 
+    //*Url route
+    @GetMapping("/recipes/search/{term}")
+    public List<RecipeSearch> showSearch(@PathVariable String term)
+    {
+        return recipeService.findLikeName(term);
+    }
     //*Url route
     @GetMapping("/recipes/cards")
     public List<RecipeCard> indexCards()
