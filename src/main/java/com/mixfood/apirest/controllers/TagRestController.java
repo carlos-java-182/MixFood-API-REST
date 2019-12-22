@@ -2,6 +2,7 @@ package com.mixfood.apirest.controllers;
 
 import java.util.*;
 
+import com.mixfood.apirest.projections.TagShort;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -31,6 +32,13 @@ public class TagRestController
 	public List<Tag> index()
 	{
 		return tagService.findAll();
+	}
+
+	//*Url route
+	@GetMapping("/tags/short")
+	public List<TagShort> indexShort()
+	{
+		return tagService.finAllShort();
 	}
 
 	//*Url route

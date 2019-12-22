@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface CategoryDAO extends CrudRepository<Category,Integer>
 {
-    @Query(value =  "SELECT id_category AS id, name, amount_recipes AS amountRecipes, thumb_route AS thumbRoute FROM categories-",
+    @Query(value =  "SELECT id_category AS id, name, amount_recipes AS amountRecipes, thumb_route AS thumbRoute FROM categories",
             nativeQuery = true)
     public List<CategoryCard> findAllForCards();
 

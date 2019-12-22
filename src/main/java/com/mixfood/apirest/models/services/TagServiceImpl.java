@@ -3,6 +3,7 @@ package com.mixfood.apirest.models.services;
 import java.util.List;
 
 
+import com.mixfood.apirest.projections.TagShort;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,6 +43,10 @@ public class TagServiceImpl implements TagService
 		tagDao.deleteById(id);
 	}
 
+	@Override
+	public List<TagShort> finAllShort() {
+		return tagDao.finAllShort();
+	}
 
 
 }
