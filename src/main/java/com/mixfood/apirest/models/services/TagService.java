@@ -17,5 +17,7 @@ public interface TagService
 
 	public List<TagShort> finAllShort();
 
+	public List<TagShort> findAllByIdRecipe(int id);
+
 	
 }

@@ -4,6 +4,7 @@ import com.mixfood.apirest.entity.Recipe;
 import com.mixfood.apirest.models.dao.RecipeDAO;
 import com.mixfood.apirest.projections.RecipeCard;
 import com.mixfood.apirest.projections.RecipeSearch;
+import com.mixfood.apirest.projections.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -46,5 +47,10 @@ public class RecipeServiceImpl implements  RecipeService
     @Override
     public List<RecipeSearch> findLikeName(String term) {
         return recipeDAO.findLikeName(term);
+    }
+
+    @Override
+    public List<RecipeCard> findTest() {
+        return  recipeDAO.findTest();
     }
 }

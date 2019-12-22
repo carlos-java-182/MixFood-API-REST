@@ -48,5 +48,10 @@ public class TagServiceImpl implements TagService
 		return tagDao.finAllShort();
 	}
 
+	@Override
+	public List<TagShort> findAllByIdRecipe(int id) {
+		return tagDao.findAllByIdRecipe(id);
+	}
+
 
 }

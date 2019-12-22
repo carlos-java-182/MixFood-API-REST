@@ -3,16 +3,18 @@ package com.mixfood.apirest.projections;
 import java.util.Date;
 import java.util.List;
 
-public interface RecipeCard {
+public interface Test {
     int getId();
     int getAverangeRanking();
     int getViews();
     String getName();
     String getThumbRoute();
     Date getCreateAt();
-    Test.Category getCategory();
-    Test.User getUser();
-    List<Test.Tag> getTags();
+    Category getCategory();
+    User getUser();
+
+
+    List<Tag> getTags();
 
     interface User{
         int getId();

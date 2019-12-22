@@ -3,6 +3,7 @@ package com.mixfood.apirest.models.services;
 import com.mixfood.apirest.entity.Recipe;
 import com.mixfood.apirest.projections.RecipeCard;
 import com.mixfood.apirest.projections.RecipeSearch;
+import com.mixfood.apirest.projections.Test;
 
 import java.util.List;
 
@@ -14,5 +15,6 @@ public interface RecipeService
     public void delete(int id);
     public List<RecipeCard> findAllForCards();
     public List<RecipeSearch> findLikeName(String term);
+    public List<RecipeCard> findTest();
 
 }

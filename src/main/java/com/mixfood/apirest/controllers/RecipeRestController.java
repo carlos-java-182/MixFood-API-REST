@@ -3,9 +3,12 @@ package com.mixfood.apirest.controllers;
 import com.mixfood.apirest.entity.Recipe;
 import com.mixfood.apirest.entity.User;
 import com.mixfood.apirest.models.services.RecipeService;
+import com.mixfood.apirest.models.services.TagService;
 import com.mixfood.apirest.models.services.UserService;
 import com.mixfood.apirest.projections.RecipeCard;
 import com.mixfood.apirest.projections.RecipeSearch;
+import com.mixfood.apirest.projections.TagShort;
+import com.mixfood.apirest.projections.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -29,11 +32,15 @@ import java.util.Map;
 @RequestMapping("/api")
 public class RecipeRestController
 {
+    //*Objects declaration
     @Autowired
-    //*Declare object
     private RecipeService recipeService;
+
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private TagService tagService;
 
     //*Url route
     @GetMapping("/recipes")
@@ -52,7 +59,12 @@ public class RecipeRestController
     @GetMapping("/recipes/cards")
     public List<RecipeCard> indexCards()
     {
-        return recipeService.findAllForCards();
+        //*Variables declaration
+        int id = 0;
+        //*Get recipes
+
+
+        return  recipeService.findTest();
     }
 
     //*Url route
