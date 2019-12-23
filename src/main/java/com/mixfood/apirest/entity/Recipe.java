@@ -1,5 +1,6 @@
 package com.mixfood.apirest.entity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -8,11 +9,13 @@ import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.Type;
 
 @Entity
 @Table(name="recipes")
-public class Recipe 
+public class Recipe implements Serializable
 {
 	public Recipe()
 	{
@@ -39,6 +42,7 @@ public class Recipe
 	private String videoRoute;
 	//@Enumerated(EnumType.STRING)
 	private String status;
+	private String description;
 	private int averangeRanking;
 	private String dificult;
 	private String thumbRoute;
@@ -70,16 +74,18 @@ public class Recipe
 	private Category category;
 
 	//*Relationship many to many to ingredients
-	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	/*@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinTable( name ="recipes_ingredients",
 			joinColumns = { @JoinColumn(name="recipes_id") },
 			inverseJoinColumns = { @JoinColumn(name="ingredients_id")}
 
 	)
-	private List<Ingredient> ingredients = new ArrayList<>();
+	private List<Ingredient> ingredients = new ArrayList<>();*/
 
 	//*Relationship many to many to tags
+	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@Column(name = "")
 	@JoinTable(name = "recipes_tags",
 		joinColumns = {@JoinColumn(name = "recipes_id")},
 		inverseJoinColumns = {@JoinColumn(name = "tags_id")}
@@ -93,9 +99,13 @@ public class Recipe
 	private List<Image> images = new ArrayList<Image>();
 
 	//*
-	@OneToMany(fetch = FetchType.LAZY)
+	/*@OneToMany(fetch = FetchType.LAZY)
 	@JoinColumn(name = "recipe_id")
-	private List<Ranking> rankings = new ArrayList<>();
+	private List<Ranking> rankings = new ArrayList<>();*/
+
+
+	@OneToMany(mappedBy = "recipe")
+	private List<RecipeIngredient> recipeIngredients = new ArrayList<>();
 
 
 //	@ManyToMany(cascade = CascadeType.ALL, mappedBy = "recipes")
@@ -207,13 +217,13 @@ public class Recipe
 		this.category = category;
 	}
 
-	public List<Ingredient> getIngredients() {
+	/*public List<Ingredient> getIngredients() {
 		return ingredients;
 	}
 
 	public void setIngredients(List<Ingredient> ingredients) {
 		this.ingredients = ingredients;
-	}
+	}*/
 
 	public List<Tag> getTags() {
 		return tags;
@@ -245,6 +255,22 @@ public class Recipe
 
 	public void setViews(long views) {
 		this.views = views;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public List<RecipeIngredient> getRecipeIngredients() {
+		return recipeIngredients;
+	}
+
+	public void setRecipeIngredients(List<RecipeIngredient> recipeIngredients) {
+		this.recipeIngredients = recipeIngredients;
 	}
 }
 

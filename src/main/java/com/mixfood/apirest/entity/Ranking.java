@@ -2,11 +2,12 @@ package com.mixfood.apirest.entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 @Table(name = "rankings")
-public class Ranking {
+public class Ranking implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idRanking")

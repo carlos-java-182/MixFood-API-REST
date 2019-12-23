@@ -1,5 +1,7 @@
 package com.mixfood.apirest.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -54,7 +56,8 @@ public class Tag implements Serializable
 	
 
 	
-	//*Create aux table for relationship many to many to recipes
+	//*Create aux table for relationship many to many to recipes\
+	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 	@ManyToMany(cascade = CascadeType.ALL)
 	private List<Recipe> recipes = new ArrayList<>();
 
@@ -99,10 +102,10 @@ public class Tag implements Serializable
 		this.updateAt = updateAt;
 	}
 
-	public List<Recipe> getRecipes() {
+	/*public List<Recipe> getRecipes() {
 		return recipes;
 	}
-
+*/
 	public void setRecipes(List<Recipe> recipes) {
 		this.recipes = recipes;
 	}

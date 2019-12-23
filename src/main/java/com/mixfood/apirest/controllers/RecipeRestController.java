@@ -3,21 +3,18 @@ package com.mixfood.apirest.controllers;
 import com.mixfood.apirest.entity.Recipe;
 import com.mixfood.apirest.entity.User;
 import com.mixfood.apirest.models.services.RecipeService;
-import com.mixfood.apirest.models.services.TagService;
 import com.mixfood.apirest.models.services.UserService;
-import com.mixfood.apirest.projections.RecipeCard;
-import com.mixfood.apirest.projections.RecipeSearch;
-import com.mixfood.apirest.projections.TagShort;
-import com.mixfood.apirest.projections.Test;
+import com.mixfood.apirest.projections.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
-import javax.jws.soap.SOAPBinding;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,14 +36,18 @@ public class RecipeRestController
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private TagService tagService;
-
     //*Url route
     @GetMapping("/recipes")
     public List<Recipe> index()
     {
         return recipeService.findAll();
+    }
+
+    //*Url route
+    @GetMapping("/recipes/latests/{id}")
+    public List<RecipeLatest> indexRecipeLatests(@PathVariable int id,  @PageableDefault(value = 5, page = 0) Pageable pageable)
+    {
+        return recipeService.findRecentsByIdUser(id, pageable);
     }
 
     //*Url route
@@ -57,14 +58,9 @@ public class RecipeRestController
     }
     //*Url route
     @GetMapping("/recipes/cards")
-    public List<RecipeCard> indexCards()
+    public List<RecipeCard> indexCards(@PageableDefault(value=10, page=0) Pageable pageable)
     {
-        //*Variables declaration
-        int id = 0;
-        //*Get recipes
-
-
-        return  recipeService.findTest();
+        return  recipeService.findAllForCards(pageable);
     }
 
     //*Url route

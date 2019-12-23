@@ -1,5 +1,9 @@
 package com.mixfood.apirest.entity;
 
+import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -10,7 +14,9 @@ import javax.validation.constraints.Size;
 
 @Entity
 @Table(name="ingredients")
-public class Ingredient 
+
+//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,property = "idIngredient")
+public class Ingredient implements Serializable
 {
 	private static final long serialVersionUID = 1L;
 
@@ -36,9 +42,13 @@ public class Ingredient
 	}
 	@Temporal(TemporalType.DATE)
 	private Date updateAt;
-	
+
+	//@JsonIgnore
+	//@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+	@OneToMany(mappedBy = "ingredient", fetch = FetchType.LAZY)
+	private List<RecipeIngredient>  recipeIngredients;
 	//*Create aux table for relationship many to many to recipes
-	@ManyToMany(cascade = CascadeType.ALL)
+	//@ManyToMany(cascade = CascadeType.ALL)
 	/*@JoinTable(
 			name = "Recipes_Ingredients",
 			joinColumns = { @JoinColumn(name="recipes_id") },
@@ -51,7 +61,7 @@ public class Ingredient
 			inverseJoinColumns = { @JoinColumn(name="recipes_id")}
 
 	)*/
-	private List<Recipe> recipes = new ArrayList<>();
+	//private List<Recipe> recipes = new ArrayList<>();
 
 	/*@ManyToMany(cascade = CascadeType.ALL)
 	private List<Recipe>*/
@@ -95,11 +105,30 @@ public class Ingredient
 		this.updateAt = updateAt;
 	}
 
-	public List<Recipe> getRecipes() {
+
+
+/*	public List<RecipeIngredient> getRecipeIngredients() {
+		return recipeIngredients;
+	}
+
+	public void setRecipeIngredients(List<RecipeIngredient> recipeIngredients) {
+		this.recipeIngredients = recipeIngredients;
+	}    */
+
+/*	public List<Recipe> getRecipes() {
 		return recipes;
 	}
 
 	public void setRecipes(List<Recipe> recipes) {
 		this.recipes = recipes;
+	}      */
+
+	/*public List<RecipeIngredient> getRecipeIngredients() {
+		return recipeIngredients;
+
+	}*/
+
+	public void setRecipeIngredients(List<RecipeIngredient> recipeIngredients) {
+		this.recipeIngredients = recipeIngredients;
 	}
 }

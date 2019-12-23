@@ -3,9 +3,11 @@ package com.mixfood.apirest.models.services;
 import com.mixfood.apirest.entity.Recipe;
 import com.mixfood.apirest.models.dao.RecipeDAO;
 import com.mixfood.apirest.projections.RecipeCard;
+import com.mixfood.apirest.projections.RecipeLatest;
 import com.mixfood.apirest.projections.RecipeSearch;
-import com.mixfood.apirest.projections.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -40,8 +42,8 @@ public class RecipeServiceImpl implements  RecipeService
     }
 
     @Override
-    public List<RecipeCard> findAllForCards() {
-        return recipeDAO.findAllForCards();
+    public List<RecipeCard> findAllForCards(Pageable pageable) {
+        return recipeDAO.findAllForCards(pageable);
     }
 
     @Override
@@ -50,7 +52,8 @@ public class RecipeServiceImpl implements  RecipeService
     }
 
     @Override
-    public List<RecipeCard> findTest() {
-        return  recipeDAO.findTest();
+    public List<RecipeLatest> findRecentsByIdUser(int id, Pageable pageable) {
+        return recipeDAO.findRecentsByIdUser(id, pageable);
     }
+
 }
