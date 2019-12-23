@@ -56,4 +56,9 @@ public class RecipeServiceImpl implements  RecipeService
         return recipeDAO.findRecentsByIdUser(id, pageable);
     }
 
+    @Override
+    public List<RecipeCard> findCardsByAverangeRankingAndIdUser(int id, Pageable pageable) {
+        return recipeDAO.findCardsByAverangeRankingAndIdUser(id, pageable);
+    }
+
 }

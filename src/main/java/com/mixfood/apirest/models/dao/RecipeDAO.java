@@ -4,6 +4,7 @@ import com.mixfood.apirest.entity.Recipe;
 import com.mixfood.apirest.projections.RecipeCard;
 import com.mixfood.apirest.projections.RecipeLatest;
 import com.mixfood.apirest.projections.RecipeSearch;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -31,6 +32,9 @@ public interface RecipeDAO extends CrudRepository<Recipe,Integer>
 
     @Query("SELECT r FROM Recipe r WHERE Status = 'public' AND user_id = :id ORDER BY createAt DESC")
     public List<RecipeLatest> findRecentsByIdUser(int id, Pageable pageable);
+
+    @Query("SELECT r FROM Recipe r WHERE Status = 'public' AND user_id = :id ORDER BY averangeRanking DESC")
+    public List<RecipeCard> findCardsByAverangeRankingAndIdUser(int id, Pageable pageable);
 
 
 }

@@ -51,11 +51,19 @@ public class RecipeRestController
     }
 
     //*Url route
+    @GetMapping("/recipes/cards/featured/{id}")
+    public List<RecipeCard> indexCardsFeatured(@PathVariable int id,  @PageableDefault(value = 5, page = 0) Pageable pageable)
+    {
+        return recipeService.findCardsByAverangeRankingAndIdUser(id, pageable);
+    }
+
+    //*Url route
     @GetMapping("/recipes/search/{term}")
     public List<RecipeSearch> showSearch(@PathVariable String term)
     {
         return recipeService.findLikeName(term);
     }
+
     //*Url route
     @GetMapping("/recipes/cards")
     public List<RecipeCard> indexCards(@PageableDefault(value=10, page=0) Pageable pageable)

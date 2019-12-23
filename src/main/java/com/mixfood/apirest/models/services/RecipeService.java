@@ -17,5 +17,7 @@ public interface RecipeService
     public List<RecipeCard> findAllForCards(Pageable pageable);
     public List<RecipeSearch> findLikeName(String term);
     public List<RecipeLatest> findRecentsByIdUser(int id, Pageable pageable);
+    public List<RecipeCard> findCardsByAverangeRankingAndIdUser(int id, Pageable pageable);
+
 
 }
