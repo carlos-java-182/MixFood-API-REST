@@ -30,7 +30,7 @@ public class Recipe implements Serializable
 	@NotEmpty
 	//*Colum size
 	@Size(max = 45)
-	@Column(nullable = false, unique = true)
+	@Column(nullable = false, unique = false)
 	private String name;
 	@Size(max = 5)
 	@Column(nullable = false)
@@ -43,8 +43,8 @@ public class Recipe implements Serializable
 	//@Enumerated(EnumType.STRING)
 	private String status;
 	private String description;
-	private int averangeRanking;
-	private String dificult;
+	private double averangeRanking;
+	private String difficulty;
 	private String thumbRoute;
 	private long views;
 	@Temporal(TemporalType.TIMESTAMP)
@@ -101,12 +101,14 @@ public class Recipe implements Serializable
 	//*
 	/*@OneToMany(fetch = FetchType.LAZY)
 	@JoinColumn(name = "recipe_id")
-	private List<Ranking> rankings = new ArrayList<>();*/
+	private List<RankingDAO> rankings = new ArrayList<>();*/
 
 
 	@OneToMany(mappedBy = "recipe")
 	private List<RecipeIngredient> recipeIngredients = new ArrayList<>();
 
+	@OneToMany(mappedBy = "recipe")
+	private List<Ranking> rankings = new ArrayList<>();
 
 //	@ManyToMany(cascade = CascadeType.ALL, mappedBy = "recipes")
 
@@ -169,20 +171,20 @@ public class Recipe implements Serializable
 		this.status = status;
 	}
 
-	public int getAverangeRanking() {
+	public double getAverangeRanking() {
 		return averangeRanking;
 	}
 
-	public void setAverangeRanking(int averangeRanking) {
+	public void setAverangeRanking(double averangeRanking) {
 		this.averangeRanking = averangeRanking;
 	}
 
-	public String getDificult() {
-		return dificult;
+	public String getDifficulty() {
+		return difficulty;
 	}
 
-	public void setDificult(String dificult) {
-		this.dificult = dificult;
+	public void setDifficulty(String difficulty) {
+		this.difficulty = difficulty;
 	}
 
 	public Date getCreateAt() {
@@ -271,6 +273,14 @@ public class Recipe implements Serializable
 
 	public void setRecipeIngredients(List<RecipeIngredient> recipeIngredients) {
 		this.recipeIngredients = recipeIngredients;
+	}
+
+	public List<Ranking> getRankings() {
+		return rankings;
+	}
+
+	public void setRankings(List<Ranking> rankings) {
+		this.rankings = rankings;
 	}
 }
 

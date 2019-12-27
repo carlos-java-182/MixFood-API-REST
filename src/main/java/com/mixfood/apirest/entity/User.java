@@ -88,6 +88,10 @@ public class User implements Serializable
 	/*@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "role_id",nullable = false)
 	private Role role;*/
+
+	@OneToMany(mappedBy = "user")
+	private List<Ranking> rankings = new ArrayList<>();
+
 	//*Getters and Setters
 	public int getId() {
 		return id;
@@ -208,9 +212,12 @@ public void setRecipes(List<Recipe> recipes) {
 public void setRecipes(List<Recipe> recipes) {
 	this.recipes = recipes;
 }*/
-    
-   
-   
-   
-   
-   }
+
+	/*public List<Ranking> getRankings() {
+		return rankings;
+	}  */
+
+	public void setRankings(List<Ranking> rankings) {
+		this.rankings = rankings;
+	}
+}

@@ -7,10 +7,11 @@ import com.mixfood.apirest.projections.RecipeLatest;
 import com.mixfood.apirest.projections.RecipeSearch;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
@@ -21,7 +22,7 @@ public class RecipeServiceImpl implements  RecipeService
     private RecipeDAO recipeDAO;
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<Recipe> findAll() {
         return (List<Recipe>) recipeDAO.findAll();
     }
@@ -57,8 +58,13 @@ public class RecipeServiceImpl implements  RecipeService
     }
 
     @Override
-    public List<RecipeCard> findCardsByAverangeRankingAndIdUser(int id, Pageable pageable) {
+    public List<RecipeLatest> findCardsByAverangeRankingAndIdUser(int id, Pageable pageable) {
         return recipeDAO.findCardsByAverangeRankingAndIdUser(id, pageable);
+    }
+
+    @Override
+    public Page<RecipeCard> findAllByName(String term, int idCategory, Pageable pageable) {
+        return recipeDAO.findAllByName(term, idCategory, pageable);
     }
 
 }

@@ -3,9 +3,11 @@ package com.mixfood.apirest.projections;
 public interface RecipeLatest
 {
     int getId();
-    String getName();
     int getAverangeRanking();
+    String getName();
+    String getDescription();
     String getThumbRoute();
+
     Category getCategory();
     User getUser();
 

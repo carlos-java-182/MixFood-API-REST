@@ -1,5 +1,8 @@
 package com.mixfood.apirest.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.Date;
 
 import javax.persistence.*;
@@ -26,6 +29,10 @@ public class Comment
 	@Temporal(TemporalType.DATE)
 	private Date updateAt;
 
-	@OneToOne(mappedBy = "comment")
-	private Ranking ranking;
+	//@JsonIgnore
+	//@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+	/*@OneToOne(mappedBy = "comment",fetch = FetchType.LAZY)
+	private Ranking ranking;*/
+
+
 }

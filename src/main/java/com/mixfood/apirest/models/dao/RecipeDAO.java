@@ -5,13 +5,15 @@ import com.mixfood.apirest.projections.RecipeCard;
 import com.mixfood.apirest.projections.RecipeLatest;
 import com.mixfood.apirest.projections.RecipeSearch;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 
-public interface RecipeDAO extends CrudRepository<Recipe,Integer>
+public interface RecipeDAO extends JpaRepository<Recipe,Integer>
 {
    /* @Query(value =  "SELECT r.id_recipe AS id, r.name AS name, r.create_at AS createAt, r.averange_ranking AS averangeRanking, r.thumb_route AS thumbRoute, r.user_id AS idUser, CONCAT(u.name,' ', u.lastname) AS username, r.category_id AS idCategory, c.name AS categoryName FROM Recipes r \n" +
             "INNER JOIN users u ON u.id_user = r.user_id " +
@@ -20,7 +22,7 @@ public interface RecipeDAO extends CrudRepository<Recipe,Integer>
     //@Query("SELECT r.id_recipe AS id, r.name AS name, r.create_at AS createAt, r.averange_ranking AS averangeRanking, r.thumb_route AS thumbRoute, r.user_id AS idUser FROM Recipes r ")
 //    public List<RecipeCard> findAllForCards();
 
-    //*Get Recients recipes
+    //*Get Recents recipes
     @Query("SELECT r FROM Recipe r WHERE Status = 'public' ORDER BY createAt DESC")
     public List<RecipeCard> findAllForCards(Pageable pageable);
 
@@ -30,11 +32,15 @@ public interface RecipeDAO extends CrudRepository<Recipe,Integer>
 
     //*Find recents recipes by id user
 
-    @Query("SELECT r FROM Recipe r WHERE Status = 'public' AND user_id = :id ORDER BY createAt DESC")
+    @Query("SELECT r FROM Recipe r WHERE Status = 'public' ORDER BY createAt DESC")
     public List<RecipeLatest> findRecentsByIdUser(int id, Pageable pageable);
 
-    @Query("SELECT r FROM Recipe r WHERE Status = 'public' AND user_id = :id ORDER BY averangeRanking DESC")
-    public List<RecipeCard> findCardsByAverangeRankingAndIdUser(int id, Pageable pageable);
+    //*Find featured recipes
+    @Query("SELECT r FROM Recipe r WHERE (averangeRanking >= 3 AND Status = 'public') AND user_id = :id ORDER BY views DESC")
+    public List<RecipeLatest> findCardsByAverangeRankingAndIdUser(int id, Pageable pageable);
 
+    //*Find recipes by Name and Category
+    @Query("SELECT r FROM Recipe r WHERE category_id = :idCategory AND name LIKE :term%")
+    public Page<RecipeCard> findAllByName(String term, int idCategory, Pageable pageable);
 
 }

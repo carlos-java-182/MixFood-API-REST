@@ -13,4 +13,7 @@ public interface CategoryDAO extends CrudRepository<Category,Integer>
             nativeQuery = true)
     public List<CategoryCard> findAllForCards();
 
+    //@Query("SELECT c FROM Category c")
+    //public List<CategoryCard> findAll();
+
 }
