@@ -1,5 +1,8 @@
 package com.mixfood.apirest.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -19,6 +22,9 @@ public class User implements Serializable
 	{
 
 	}
+
+
+	
     private static final long serialVersionUID = 1L;
 
 	@Id 
@@ -70,7 +76,8 @@ public class User implements Serializable
     
    //@OneToMany(targetEntity = Recipe.class, cascade = CascadeType.ALL, mappedBy = "user")
 	//*Relationship one to many to recipes
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    //@JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
     private List<Recipe> recipes = new ArrayList<Recipe>();
 
@@ -199,11 +206,13 @@ public class User implements Serializable
 /*
 public List<Recipe> getRecipes() {
 	return recipes;
-}
+}*/
+
+
 
 public void setRecipes(List<Recipe> recipes) {
 	this.recipes = recipes;
-}*/
+}
 
 /*public List<Recipe> getRecipes() {
 	return recipes;
@@ -216,6 +225,22 @@ public void setRecipes(List<Recipe> recipes) {
 	/*public List<Ranking> getRankings() {
 		return rankings;
 	}  */
+
+	/*public List<Follower> getFollowers() {
+		return followers;
+	}
+*/
+	public void setFollowers(List<Follower> followers) {
+		this.followers = followers;
+	}
+
+	/*public List<Follower> getUsers() {
+		return users;
+	}*/
+
+	public void setUsers(List<Follower> users) {
+		this.users = users;
+	}
 
 	public void setRankings(List<Ranking> rankings) {
 		this.rankings = rankings;

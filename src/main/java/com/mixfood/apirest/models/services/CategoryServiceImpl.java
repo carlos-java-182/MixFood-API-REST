@@ -3,6 +3,7 @@ package com.mixfood.apirest.models.services;
 import com.mixfood.apirest.entity.Category;
 import com.mixfood.apirest.models.dao.CategoryDAO;
 import com.mixfood.apirest.projections.CategoryCard;
+import com.mixfood.apirest.projections.CategoryList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,5 +40,10 @@ public class CategoryServiceImpl implements CategoryService
     @Override
     public List<CategoryCard> findAllForCards() {
         return categoryDAO.findAllForCards();
+    }
+
+    @Override
+    public List<CategoryList> findAllForList() {
+        return categoryDAO.findAllForList();
     }
 }

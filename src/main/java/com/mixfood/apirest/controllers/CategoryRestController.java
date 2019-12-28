@@ -3,6 +3,7 @@ package com.mixfood.apirest.controllers;
 import com.mixfood.apirest.entity.Category;
 import com.mixfood.apirest.models.services.CategoryService;
 import com.mixfood.apirest.projections.CategoryCard;
+import com.mixfood.apirest.projections.CategoryList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -38,6 +39,12 @@ public class CategoryRestController
     public List<CategoryCard> indexCard()
     {
         return categoryService.findAllForCards();
+    }
+
+    @GetMapping("categories/list")
+    public List<CategoryList> indexList()
+    {
+        return categoryService.findAllForList();
     }
     //*Url route
     @GetMapping("/categories/{id}")

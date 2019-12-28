@@ -9,6 +9,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.Type;
@@ -17,10 +18,7 @@ import org.hibernate.annotations.Type;
 @Table(name="recipes")
 public class Recipe implements Serializable
 {
-	public Recipe()
-	{
 
-	}
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -28,7 +26,7 @@ public class Recipe implements Serializable
 	@Column(name="idRecipe")
 	private int id;
 	@NotEmpty
-	//*Colum size
+	//*Column size
 	@Size(max = 45)
 	@Column(nullable = false, unique = false)
 	private String name;
@@ -57,12 +55,21 @@ public class Recipe implements Serializable
 	@Temporal(TemporalType.DATE)
 	private Date updateAt;
 
+	public Recipe()
+	{
+
+	}
+
+
+
 	/**
 	 * Relationships
 	 */
 
 	//*Relationship many to one to user
 	//@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+
 	@ManyToOne(cascade = CascadeType.ALL)
 	//*Column for select join
 	@JoinColumn(name="user_id",nullable = false)
@@ -83,7 +90,7 @@ public class Recipe implements Serializable
 	private List<Ingredient> ingredients = new ArrayList<>();*/
 
 	//*Relationship many to many to tags
-	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+	//@JsonIgnore
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@Column(name = "")
 	@JoinTable(name = "recipes_tags",

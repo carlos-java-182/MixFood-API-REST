@@ -18,9 +18,11 @@ public class Ranking implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idRanking")
     private int id;
+
     @NotNull
     @Column(nullable = false, columnDefinition = "TINYINT")
     private short punctuation;
+
     @NotEmpty
     @Column(nullable = false)
     @Type(type = "text")

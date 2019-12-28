@@ -12,16 +12,25 @@ public class Follower
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="idFollower")
 	private int id;
-	
-	@Temporal(TemporalType.DATE)
-	private Date createAt;
+
+	@PrePersist
 	public void prePersist()
 	{
 		createAt = new Date();
 	}
 	@Temporal(TemporalType.DATE)
+	private Date createAt;
+
+	@Temporal(TemporalType.DATE)
 	private Date updateAt;
 
+	/*public Follower(Date createAt, Date updateAt, User user, User follower)
+	{
+		this.createAt = createAt;
+		this.updateAt = updateAt;
+		this.user = user;
+		this.follower = follower;
+	}*/
 	/*
 	*Relationships
 	 */
