@@ -83,50 +83,53 @@ public class RecipeRestController
 
     //*Url route
     @PostMapping("/recipes")
+    /**
+     **Create Recipe
+     */
     public ResponseEntity<?> create(@Valid @RequestBody Recipe recipe, BindingResult result)
-{
-    //*Objects declaration
-    Recipe newRecipe = null;
-    User user = null;
-    Map<String,Object> response = new HashMap<>();
-
-    user = userService.findById(1);
-    recipe.setUser(user);
-    //*Validate errors
-    if(result.hasErrors())
     {
-        //*List declaration
-        List<String> errors = new ArrayList<>();
-        //*Get errors and add to list
-        for(FieldError err : result.getFieldErrors())
+        //*Objects declaration
+        Recipe newRecipe = null;
+        User user = null;
+        Map<String,Object> response = new HashMap<>();
+
+       // user = userService.findById(1);
+        //recipe.setUser(user);
+        //*Validate errors
+        if(result.hasErrors())
         {
-            errors.add("Field '"+err.getField()+"' "+err.getDefaultMessage());
+            //*List declaration
+            List<String> errors = new ArrayList<>();
+            //*Get errors and add to list
+            for(FieldError err : result.getFieldErrors())
+            {
+                errors.add("Field '"+err.getField()+"' "+err.getDefaultMessage());
+            }
+
+            //*Add errors list to response map
+            response.put("errors", errors);
+            //*Return response
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
         }
 
-        //*Add errors list to response map
-        response.put("errors", errors);
-        //*Return response
-        return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
-    }
+        try
+        {
+            //*Save recipe in database and add recipe in the object
+            newRecipe = recipeService.save(recipe);
+        }
+        catch(DataAccessException e)
+        {
+            //*Response database error
+            response.put("message","Error inserting into database");
+            response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
-    try
-    {
-        //*Save recipe in database and add recipe in the object
-        newRecipe = recipeService.save(recipe);
+        //*Created user response
+        response.put("message", "The recipe has been created");
+        // response.put("recipe", recipe);
+        return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
     }
-    catch(DataAccessException e)
-    {
-        //*Response database error
-        response.put("message","Error inserting into database");
-        response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
-        return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-    //*Created user response
-    response.put("message", "The recipe has been created");
-    // response.put("recipe", recipe);
-    return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
-}
 
     //*Url route
     @PutMapping("/recipes/views/{id}")

@@ -1,5 +1,6 @@
 package com.mixfood.apirest.entity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -10,7 +11,7 @@ import javax.validation.constraints.Size;
 
 @Entity
 @Table(name="categories")
-public class Category
+public class Category implements Serializable
 {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)

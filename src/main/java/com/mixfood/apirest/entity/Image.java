@@ -29,7 +29,7 @@ public class Image
 	private Date updateAt;
 
 	//*Relationship many to one recipe
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn(name="recipe_id", nullable = false)
 	private Recipe recipe;
 
@@ -68,8 +68,8 @@ public class Image
 	/*public Recipe getRecipe() {
 		return recipe;
 	}
-
+*/
 	public void setRecipe(Recipe recipe) {
 		this.recipe = recipe;
-	}*/
+	}
 }

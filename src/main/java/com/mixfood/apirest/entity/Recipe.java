@@ -33,17 +33,22 @@ public class Recipe implements Serializable
 	@Size(max = 5)
 	@Column(nullable = false)
 	private String preparationTime;
-	@Column(length = 655535, columnDefinition = "TEXT")
+	@NotEmpty
+	@Column(length = 655535, columnDefinition = "TEXT", nullable = false)
 	@Type(type="text")
-	private String steps;
+	private String preparationSteps;
 	@Size(max = 80)
-	private String videoRoute;
+	private String videoFrame;
 	//@Enumerated(EnumType.STRING)
 	private String status;
+	@NotEmpty
 	private String description;
+	@Column(columnDefinition = "decimal default 0.0")
 	private double averangeRanking;
 	private String difficulty;
+	@NotEmpty
 	private String thumbRoute;
+    @Column(columnDefinition = "bigint default 0")
 	private long views;
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createAt;
@@ -70,13 +75,13 @@ public class Recipe implements Serializable
 	//@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	//*Column for select join
 	@JoinColumn(name="user_id",nullable = false)
 	private User user;
 
 	//*Relationship many to one to categories
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn(name = "category_id",nullable = false)
 	private Category category;
 
@@ -101,7 +106,7 @@ public class Recipe implements Serializable
 
 
 	//*Relationship one to many to images
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany
 	@JoinColumn(name = "recipe_id")
 	private List<Image> images = new ArrayList<Image>();
 
@@ -154,20 +159,20 @@ public class Recipe implements Serializable
 		this.preparationTime = preparationTime;
 	}
 
-	public String getSteps() {
-		return steps;
+	public String getPreparationSteps() {
+		return preparationSteps;
 	}
 
-	public void setSteps(String steps) {
-		this.steps = steps;
+	public void setPreparationSteps(String preparationSteps) {
+		this.preparationSteps = preparationSteps;
 	}
 
-	public String getVideoRoute() {
-		return videoRoute;
+	public String getVideoFrame() {
+		return videoFrame;
 	}
 
-	public void setVideoRoute(String videoRoute) {
-		this.videoRoute = videoRoute;
+	public void setVideoFramee(String videoFrame) {
+		this.videoFrame = videoFrame;
 	}
 
 	public String getStatus() {
