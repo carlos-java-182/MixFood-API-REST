@@ -93,8 +93,6 @@ public class RecipeRestController
         User user = null;
         Map<String,Object> response = new HashMap<>();
 
-       // user = userService.findById(1);
-        //recipe.setUser(user);
         //*Validate errors
         if(result.hasErrors())
         {
@@ -127,7 +125,7 @@ public class RecipeRestController
 
         //*Created user response
         response.put("message", "The recipe has been created");
-        // response.put("recipe", recipe);
+        response.put("recipe",newRecipe.getName());
         return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
     }
 
