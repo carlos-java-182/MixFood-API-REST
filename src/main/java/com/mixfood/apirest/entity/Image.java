@@ -1,5 +1,6 @@
 package com.mixfood.apirest.entity;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.*;
@@ -8,16 +9,17 @@ import javax.validation.constraints.Size;
 
 @Entity
 @Table(name="images")
-public class Image
+public class Image implements Serializable
 {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="idImage")
 	private int id;
 	@NotEmpty
-	@Size(max = 80)
 	@Column(nullable = false)
 	private String routeImage;
+	@Column(columnDefinition = "BOOLEAN default false")
+	private Boolean isPrincipal;
 	@Temporal(TemporalType.DATE)
 	private Date createAt;
 	@PrePersist
@@ -29,7 +31,7 @@ public class Image
 	private Date updateAt;
 
 	//*Relationship many to one recipe
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="recipe_id", nullable = false)
 	private Recipe recipe;
 
@@ -65,11 +67,19 @@ public class Image
 		this.updateAt = updateAt;
 	}
 
-	/*public Recipe getRecipe() {
+	public Recipe getRecipe() {
 		return recipe;
 	}
-*/
+
 	public void setRecipe(Recipe recipe) {
 		this.recipe = recipe;
+	}
+
+	public Boolean getPrincipal() {
+		return isPrincipal;
+	}
+
+	public void setPrincipal(Boolean principal) {
+		isPrincipal = principal;
 	}
 }

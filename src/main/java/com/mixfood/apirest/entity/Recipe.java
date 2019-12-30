@@ -96,7 +96,7 @@ public class Recipe implements Serializable
 
 	//*Relationship many to many to tags
 	//@JsonIgnore
-	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToMany(fetch = FetchType.LAZY)
 	@Column(name = "")
 	@JoinTable(name = "recipes_tags",
 		joinColumns = {@JoinColumn(name = "recipes_id")},

@@ -66,7 +66,6 @@ public class CategoryRestController
             response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
         //*Id not found
         if(category == null)
         {

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -15,12 +16,17 @@ public class RecipeIngredient implements Serializable
 {
     private static final long serialVersionUID = 1L;
 
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    private int id;
+
+    @NotEmpty
     private String quantity;
 
 
 
     //*Relationships
-    @Id
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recipe_id", nullable = false)
     private Recipe recipe;
@@ -42,10 +48,10 @@ public class RecipeIngredient implements Serializable
    /* public Recipe getRecipe() {
         return recipe;
     }
-
+*/
     public void setRecipe(Recipe recipe) {
         this.recipe = recipe;
-    }  */
+    }
 
     public Ingredient getIngredient() {
         return ingredient;
@@ -64,22 +70,11 @@ public class RecipeIngredient implements Serializable
     }      */
 
 
+    public int getId() {
+        return id;
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    public void setId(int id) {
+        this.id = id;
+    }
 }

@@ -1,7 +1,9 @@
 package com.mixfood.apirest.controllers;
 
 import com.mixfood.apirest.entity.Recipe;
+import com.mixfood.apirest.entity.RecipeIngredient;
 import com.mixfood.apirest.entity.User;
+import com.mixfood.apirest.models.services.RecipeIngredientService;
 import com.mixfood.apirest.models.services.RecipeService;
 import com.mixfood.apirest.models.services.UserService;
 import com.mixfood.apirest.projections.*;
@@ -38,6 +40,8 @@ public class RecipeRestController
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private RecipeIngredientService recipeIngredientService;
     //*Url route
     @GetMapping("/recipes")
     public List<Recipe> index()
@@ -125,7 +129,52 @@ public class RecipeRestController
 
         //*Created user response
         response.put("message", "The recipe has been created");
-        response.put("recipe",newRecipe.getName());
+        response.put("id",newRecipe.getId());
+        response.put("recipeName",newRecipe.getName());
+        return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
+    }
+
+    @PostMapping("recipes/ingredients")
+    public ResponseEntity<?> createIngredients(@Valid @RequestBody List<RecipeIngredient> recipeIngredients, BindingResult result)
+    {
+        //*Objects declaration
+        RecipeIngredient recipeIngredient1 = null;
+        Map<String,Object> response = new HashMap<>();
+        //*Validate errors
+        if(result.hasErrors())
+        {
+            //*List declaration
+            List<String> errors = new ArrayList<>();
+            //*Get errors and add to list
+            for(FieldError err : result.getFieldErrors())
+            {
+                errors.add("Field '"+err.getField()+"' "+err.getDefaultMessage());
+            }
+
+            //*Add errors list to response map
+            response.put("errors", errors);
+            //*Return response
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
+        }
+        try
+        {
+            //*Save recipe in database and add recipe in the object
+            for(RecipeIngredient recipeIngredient: recipeIngredients)
+            {
+             recipeIngredientService.save(recipeIngredient);
+            }
+
+        }
+        catch(DataAccessException e)
+        {
+            //*Response database error
+            response.put("message","Error inserting into database");
+            response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        //*Created user response
+        response.put("message", "The recipe ingredient has been created");
         return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
     }
 
