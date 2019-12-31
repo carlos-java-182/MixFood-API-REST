@@ -95,7 +95,6 @@ public class RecipeRestController
         //return recipeService.findLatestsByIdUser(id,pageable);
     }
 
-
     //*Url route
     @GetMapping("/recipes/cards/featured/{id}/items/{size}")
     public List<RecipeLatest> indexCardsFeatured(@PathVariable int id, @PathVariable int size)
@@ -107,12 +106,22 @@ public class RecipeRestController
 
     //*Url route
     @GetMapping("/recipes/cards/search/{term}/{id}/page/{page}")
-    public Page<RecipeCard> indexCardsFeatured(@PathVariable String term, @PathVariable int id, @PathVariable int page)
+    public Page<RecipeCard> showCardsByNameAndCategory(@PathVariable String term, @PathVariable int id, @PathVariable int page)
     {
         //*Create object pageable for pagination
         Pageable pageable = PageRequest.of(page,12);
-        return recipeService.findAllByName(term, id, pageable);
+        return recipeService.findACardsByNameAndCategory(term, id, pageable);
     }
+
+    //*Url route
+    @GetMapping("/recipes/cards/search/{term}/page/{page}")
+    public Page<RecipeCard> showCardsByName(@PathVariable String term,@PathVariable int page)
+    {
+        //*Create object pageable for pagination
+        Pageable pageable = PageRequest.of(page,12);
+        return recipeService.findCardsByName(term,pageable);
+    }
+
     //*Url route
     @GetMapping("/recipes/search/{term}")
     public List<RecipeSearch> showSearch(@PathVariable String term)

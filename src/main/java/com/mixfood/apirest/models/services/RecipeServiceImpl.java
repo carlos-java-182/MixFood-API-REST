@@ -64,8 +64,8 @@ public class RecipeServiceImpl implements  RecipeService
     }
 
     @Override
-    public Page<RecipeCard> findAllByName(String term, int idCategory, Pageable pageable) {
-        return recipeDAO.findAllByName(term, idCategory, pageable);
+    public Page<RecipeCard> findACardsByNameAndCategory(String term, int idCategory, Pageable pageable) {
+        return recipeDAO.findACardsByNameAndCategory(term, idCategory, pageable);
     }
 
     @Override
@@ -73,4 +73,8 @@ public class RecipeServiceImpl implements  RecipeService
         return recipeDAO.findLatestsByIdUser(id, pageable);
     }
 
+    @Override
+    public Page<RecipeCard> findCardsByName(String term, Pageable pageable) {
+        return recipeDAO.findCardsByName(term,pageable);
+    }
 }

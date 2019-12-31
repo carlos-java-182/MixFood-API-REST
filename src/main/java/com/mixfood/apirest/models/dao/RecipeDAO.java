@@ -33,7 +33,6 @@ public interface RecipeDAO extends JpaRepository<Recipe,Integer>
     public List<RecipeSearch> findLikeName(String term);
 
     //*Find recents recipes by id user
-
     @Query("SELECT r FROM Recipe r WHERE Status = 'public' ORDER BY createAt DESC")
     public List<RecipeLatest> findRecentsByIdUser(int id, Pageable pageable);
 
@@ -42,11 +41,14 @@ public interface RecipeDAO extends JpaRepository<Recipe,Integer>
     public List<RecipeLatest> findCardsByAverangeRankingAndIdUser(int id, Pageable pageable);
 
     //*Find recipes by Name and Category
-    @Query("SELECT r FROM Recipe r WHERE category_id = :idCategory AND name LIKE :term%")
-    public Page<RecipeCard> findAllByName(String term, int idCategory, Pageable pageable);
+    @Query("SELECT r FROM Recipe r WHERE (category_id = :idCategory AND name LIKE :term%) AND status ='public'")
+    public Page<RecipeCard> findACardsByNameAndCategory(String term, int idCategory, Pageable pageable);
+
+    @Query("SELECT r FROM Recipe r WHERE name LIKE :term% AND status ='public'")
+    public Page<RecipeCard> findCardsByName(String term, Pageable pageable);
 
     //*Find latests recipes by user
-    @Query("SELECT r FROM Recipe  r WHERE user_id = :id")
+    @Query("SELECT r FROM Recipe  r WHERE user_id = :id AND status ='public'")
     public List<RecipeLatestUser> findLatestsByIdUser(int id, Pageable pageable);
 
 }

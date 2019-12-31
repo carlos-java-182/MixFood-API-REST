@@ -20,8 +20,10 @@ public interface RecipeService
     public List<RecipeSearch> findLikeName(String term);
     public List<RecipeLatest> findRecentsByIdUser(int id, Pageable pageable);
     public List<RecipeLatest> findCardsByAverangeRankingAndIdUser(int id, Pageable pageable);
-    public Page<RecipeCard> findAllByName(String term, int idCategory, Pageable pageable);
+    public Page<RecipeCard> findACardsByNameAndCategory(String term, int idCategory, Pageable pageable);
     public List<RecipeLatestUser> findLatestsByIdUser(int id, Pageable pageable);
+    public Page<RecipeCard> findCardsByName(String term, Pageable pageable);
+
 
 
 }
