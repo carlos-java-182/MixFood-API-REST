@@ -13,6 +13,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.Type;
+import org.hibernate.boot.model.source.spi.FetchCharacteristics;
 
 @Entity
 @Table(name="recipes")
@@ -50,6 +51,8 @@ public class Recipe implements Serializable
 	private String thumbRoute;
     @Column(columnDefinition = "bigint default 0")
 	private long views;
+    @Column(columnDefinition = "bigint default 0")
+	private long totalLikes;
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createAt;
 	@PrePersist
@@ -95,9 +98,7 @@ public class Recipe implements Serializable
 	private List<Ingredient> ingredients = new ArrayList<>();*/
 
 	//*Relationship many to many to tags
-	//@JsonIgnore
 	@ManyToMany(fetch = FetchType.LAZY)
-	@Column(name = "")
 	@JoinTable(name = "recipes_tags",
 		joinColumns = {@JoinColumn(name = "recipes_id")},
 		inverseJoinColumns = {@JoinColumn(name = "tags_id")}
@@ -121,6 +122,18 @@ public class Recipe implements Serializable
 
 	@OneToMany(mappedBy = "recipe")
 	private List<Ranking> rankings = new ArrayList<>();
+
+	//*Relationship many to many to tags
+	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(
+			name = "recipes_likes",
+			joinColumns = {@JoinColumn(name = "recipe_id")},
+			inverseJoinColumns = {@JoinColumn(name = "user_id")}
+	)
+	private List<User> usersLike = new ArrayList<>();
+
+
 
 //	@ManyToMany(cascade = CascadeType.ALL, mappedBy = "recipes")
 
@@ -293,6 +306,22 @@ public class Recipe implements Serializable
 
 	public void setRankings(List<Ranking> rankings) {
 		this.rankings = rankings;
+	}
+
+	public List<User> getUsersLike() {
+		return usersLike;
+	}
+
+	public void setUsersLike(List<User> usersLike) {
+		this.usersLike = usersLike;
+	}
+
+	public long getTotalLikes() {
+		return totalLikes;
+	}
+
+	public void setTotalLikes(long totalLikes) {
+		this.totalLikes = totalLikes;
 	}
 }
 

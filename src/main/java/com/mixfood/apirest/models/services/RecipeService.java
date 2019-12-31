@@ -3,6 +3,7 @@ package com.mixfood.apirest.models.services;
 import com.mixfood.apirest.entity.Recipe;
 import com.mixfood.apirest.projections.RecipeCard;
 import com.mixfood.apirest.projections.RecipeLatest;
+import com.mixfood.apirest.projections.RecipeLatestUser;
 import com.mixfood.apirest.projections.RecipeSearch;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,5 +21,7 @@ public interface RecipeService
     public List<RecipeLatest> findRecentsByIdUser(int id, Pageable pageable);
     public List<RecipeLatest> findCardsByAverangeRankingAndIdUser(int id, Pageable pageable);
     public Page<RecipeCard> findAllByName(String term, int idCategory, Pageable pageable);
+    public List<RecipeLatestUser> findLatestsByIdUser(int id, Pageable pageable);
+
 
 }

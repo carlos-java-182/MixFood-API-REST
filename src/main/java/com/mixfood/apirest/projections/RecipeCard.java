@@ -7,6 +7,7 @@ public interface RecipeCard {
     int getId();
     int getAverangeRanking();
     int getViews();
+    int getTotalLikes();
     String getName();
     String getThumbRoute();
     Date getCreateAt();
@@ -29,5 +30,4 @@ public interface RecipeCard {
         int getId();
         String getName();
     }
-
 }

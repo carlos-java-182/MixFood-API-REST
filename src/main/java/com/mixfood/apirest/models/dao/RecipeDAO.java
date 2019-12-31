@@ -1,8 +1,10 @@
 package com.mixfood.apirest.models.dao;
 
 import com.mixfood.apirest.entity.Recipe;
+import com.mixfood.apirest.entity.User;
 import com.mixfood.apirest.projections.RecipeCard;
 import com.mixfood.apirest.projections.RecipeLatest;
+import com.mixfood.apirest.projections.RecipeLatestUser;
 import com.mixfood.apirest.projections.RecipeSearch;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,7 +25,7 @@ public interface RecipeDAO extends JpaRepository<Recipe,Integer>
 //    public List<RecipeCard> findAllForCards();
 
     //*Get Recents recipes
-    @Query("SELECT r FROM Recipe r WHERE Status = 'public' ORDER BY createAt DESC")
+    @Query("SELECT r FROM Recipe r WHERE status = 'public' ORDER BY createAt DESC")
     public List<RecipeCard> findAllForCards(Pageable pageable);
 
     //*Find recipes by name
@@ -42,5 +44,9 @@ public interface RecipeDAO extends JpaRepository<Recipe,Integer>
     //*Find recipes by Name and Category
     @Query("SELECT r FROM Recipe r WHERE category_id = :idCategory AND name LIKE :term%")
     public Page<RecipeCard> findAllByName(String term, int idCategory, Pageable pageable);
+
+    //*Find latests recipes by user
+    @Query("SELECT r FROM Recipe  r WHERE user_id = :id")
+    public List<RecipeLatestUser> findLatestsByIdUser(int id, Pageable pageable);
 
 }

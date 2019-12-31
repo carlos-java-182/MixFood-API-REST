@@ -12,6 +12,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableArgumentResolver;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,16 +51,57 @@ public class RecipeRestController
     }
 
     //*Url route
-    @GetMapping("/recipes/latests/{id}")
-    public List<RecipeLatest> indexRecipeLatests(@PathVariable int id,  @PageableDefault(value = 5, page = 0) Pageable pageable)
+    @GetMapping("/recipes/latests/{id}/items/{size}")
+    public List<RecipeLatest> indexRecipeLatests(@PathVariable int id, @PathVariable int size)
     {
+        Pageable pageable  = PageRequest.of(0,size);
         return recipeService.findRecentsByIdUser(id, pageable);
     }
 
     //*Url route
-    @GetMapping("/recipes/cards/featured/{id}")
-    public List<RecipeLatest> indexCardsFeatured(@PathVariable int id,  @PageableDefault(value = 3, page = 0) Pageable pageable)
+    @GetMapping("/recipes/users/latests/{id}/items/{size}")
+    public ResponseEntity<?> showLatestUser(@PathVariable int id, @PathVariable int size)
     {
+        //*Objects declaration
+        List<RecipeLatestUser> recipes;
+        Map<String,Object> response = new HashMap<>();
+
+        try
+        {
+            Pageable pageable = PageRequest.of(0,size);
+            //*Find recipes and save in object recipes
+            recipes = recipeService.findLatestsByIdUser(id,pageable);
+            System.out.println("RECIPES: "+recipes);
+        }
+        catch(DataAccessException e)
+        {
+            //*Response database error
+            response.put("message","Error consulting database");
+            response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        //*Id not found
+        if(recipes.isEmpty())
+        {
+            response.put("message","ID: ".concat(String.valueOf(id).concat(" not found!")));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<List<RecipeLatestUser>>(recipes,HttpStatus.OK);
+
+
+       // Pageable pageable = PageRequest.of(0,size);
+        //return recipeService.findLatestsByIdUser(id,pageable);
+    }
+
+
+    //*Url route
+    @GetMapping("/recipes/cards/featured/{id}/items/{size}")
+    public List<RecipeLatest> indexCardsFeatured(@PathVariable int id, @PathVariable int size)
+    {
+        //*Create object pageable for pagination
+        Pageable pageable = PageRequest.of(0,size);
         return recipeService.findCardsByAverangeRankingAndIdUser(id, pageable);
     }
 

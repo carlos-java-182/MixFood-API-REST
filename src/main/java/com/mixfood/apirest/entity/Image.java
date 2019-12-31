@@ -67,9 +67,9 @@ public class Image implements Serializable
 		this.updateAt = updateAt;
 	}
 
-	public Recipe getRecipe() {
+	/*public Recipe getRecipe() {
 		return recipe;
-	}
+	}*/
 
 	public void setRecipe(Recipe recipe) {
 		this.recipe = recipe;

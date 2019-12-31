@@ -4,6 +4,7 @@ import com.mixfood.apirest.entity.Recipe;
 import com.mixfood.apirest.models.dao.RecipeDAO;
 import com.mixfood.apirest.projections.RecipeCard;
 import com.mixfood.apirest.projections.RecipeLatest;
+import com.mixfood.apirest.projections.RecipeLatestUser;
 import com.mixfood.apirest.projections.RecipeSearch;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -65,6 +66,11 @@ public class RecipeServiceImpl implements  RecipeService
     @Override
     public Page<RecipeCard> findAllByName(String term, int idCategory, Pageable pageable) {
         return recipeDAO.findAllByName(term, idCategory, pageable);
+    }
+
+    @Override
+    public List<RecipeLatestUser> findLatestsByIdUser(int id, Pageable pageable) {
+        return recipeDAO.findLatestsByIdUser(id, pageable);
     }
 
 }

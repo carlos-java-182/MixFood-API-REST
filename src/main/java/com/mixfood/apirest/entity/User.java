@@ -99,6 +99,15 @@ public class User implements Serializable
 	@OneToMany(mappedBy = "user")
 	private List<Ranking> rankings = new ArrayList<>();
 
+	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+	@OneToMany(mappedBy = "user")
+	private List<SocialNetwork> socialNetworks = new ArrayList<>();
+
+	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+	@ManyToMany(mappedBy = "usersLike")
+	private List<Recipe> recipesLike = new ArrayList<>();
+
+
 	//*Getters and Setters
 	public int getId() {
 		return id;
@@ -244,5 +253,19 @@ public void setRecipes(List<Recipe> recipes) {
 
 	public void setRankings(List<Ranking> rankings) {
 		this.rankings = rankings;
+	}
+
+	public List<SocialNetwork> getSocialNetworks() {
+		return socialNetworks;
+	}
+
+	public void setSocialNetworks(List<SocialNetwork> socialNetworks) {
+		this.socialNetworks = socialNetworks;
+	}
+
+
+
+	public void setRecipesLike(List<Recipe> recipesLike) {
+		this.recipesLike = recipesLike;
 	}
 }

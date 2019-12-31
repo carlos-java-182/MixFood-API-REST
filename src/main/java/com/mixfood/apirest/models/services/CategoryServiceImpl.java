@@ -5,6 +5,7 @@ import com.mixfood.apirest.models.dao.CategoryDAO;
 import com.mixfood.apirest.projections.CategoryCard;
 import com.mixfood.apirest.projections.CategoryList;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -45,5 +46,10 @@ public class CategoryServiceImpl implements CategoryService
     @Override
     public List<CategoryList> findAllForList() {
         return categoryDAO.findAllForList();
+    }
+
+    @Override
+    public List<CategoryList> findListByIdUser(int id, Pageable pageable) {
+        return categoryDAO.findListByIdUser(id,pageable);
     }
 }
