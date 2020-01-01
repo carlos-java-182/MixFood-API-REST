@@ -98,7 +98,8 @@ public class Recipe implements Serializable
 	private List<Ingredient> ingredients = new ArrayList<>();*/
 
 	//*Relationship many to many to tags
-	@ManyToMany(fetch = FetchType.LAZY)
+	@JsonIgnoreProperties("recipes")
+	@ManyToMany( fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinTable(name = "recipes_tags",
 		joinColumns = {@JoinColumn(name = "recipes_id")},
 		inverseJoinColumns = {@JoinColumn(name = "tags_id")}

@@ -4,6 +4,7 @@ import com.mixfood.apirest.entity.Category;
 import com.mixfood.apirest.models.services.CategoryService;
 import com.mixfood.apirest.projections.CategoryCard;
 import com.mixfood.apirest.projections.CategoryList;
+import com.mixfood.apirest.projections.CategoryName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.PageRequest;
@@ -55,6 +56,35 @@ public class CategoryRestController
         Pageable pageable = PageRequest.of(0,size);
         return categoryService.findListByIdUser(id,pageable);
     }
+
+    @GetMapping("/categories/name/{id}")
+    public ResponseEntity<?> showNameById(@PathVariable int id)
+    {
+        //*Objects declaration
+        CategoryName categoryName = null;
+        Map<String,Object> response = new HashMap<>();
+
+        try
+        {
+            //*Find category and save in object category
+            categoryName = categoryService.findNameById(id);
+        }
+        catch(DataAccessException e)
+        {
+            //*Response database error
+            response.put("message","Error consulting database");
+            response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        //*Id not found
+        if(categoryName == null)
+        {
+            response.put("message","ID: ".concat(String.valueOf(id).concat(" not found!")));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<CategoryName>(categoryName,HttpStatus.OK);
+    }
+
     //*Url route
     @GetMapping("/categories/{id}")
     public ResponseEntity<?> show(@PathVariable int id)
@@ -127,8 +157,6 @@ public class CategoryRestController
         response.put("category", newCategory);
         return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
     }
-
-
 
     //*Url route
     @PutMapping("/categories/{id}")

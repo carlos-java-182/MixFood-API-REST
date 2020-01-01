@@ -51,4 +51,7 @@ public interface RecipeDAO extends JpaRepository<Recipe,Integer>
     @Query("SELECT r FROM Recipe  r WHERE user_id = :id AND status ='public'")
     public List<RecipeLatestUser> findLatestsByIdUser(int id, Pageable pageable);
 
+    //*Find by Category
+    @Query("SELECT r FROM Recipe r WHERE category_id =:id AND status = 'public'")
+    public Page<RecipeCard> findCardsByCategoryId(int id, Pageable pageable);
 }

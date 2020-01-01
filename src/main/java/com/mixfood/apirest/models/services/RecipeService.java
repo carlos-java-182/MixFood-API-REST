@@ -23,6 +23,8 @@ public interface RecipeService
     public Page<RecipeCard> findACardsByNameAndCategory(String term, int idCategory, Pageable pageable);
     public List<RecipeLatestUser> findLatestsByIdUser(int id, Pageable pageable);
     public Page<RecipeCard> findCardsByName(String term, Pageable pageable);
+    public Page<RecipeCard> findCardsByCategoryId(int id, Pageable pageable);
+
 
 
 

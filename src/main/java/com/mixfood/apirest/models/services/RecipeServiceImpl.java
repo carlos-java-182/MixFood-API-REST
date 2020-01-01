@@ -77,4 +77,9 @@ public class RecipeServiceImpl implements  RecipeService
     public Page<RecipeCard> findCardsByName(String term, Pageable pageable) {
         return recipeDAO.findCardsByName(term,pageable);
     }
+
+    @Override
+    public Page<RecipeCard> findCardsByCategoryId(int id, Pageable pageable) {
+        return recipeDAO.findCardsByCategoryId(id, pageable);
+    }
 }

@@ -34,12 +34,16 @@ import java.util.Map;
 @RequestMapping("/api")
 public class RecipeRestController
 {
+    //*Consts declaration
+    private final int ELEMENTS_PAGE = 12;
     //*Objects declaration
     @Autowired
     private RecipeService recipeService;
 
     @Autowired
     private UserService userService;
+
+
 
     @Autowired
     private RecipeIngredientService recipeIngredientService;
@@ -109,7 +113,7 @@ public class RecipeRestController
     public Page<RecipeCard> showCardsByNameAndCategory(@PathVariable String term, @PathVariable int id, @PathVariable int page)
     {
         //*Create object pageable for pagination
-        Pageable pageable = PageRequest.of(page,12);
+        Pageable pageable = PageRequest.of(page,ELEMENTS_PAGE);
         return recipeService.findACardsByNameAndCategory(term, id, pageable);
     }
 
@@ -118,10 +122,17 @@ public class RecipeRestController
     public Page<RecipeCard> showCardsByName(@PathVariable String term,@PathVariable int page)
     {
         //*Create object pageable for pagination
-        Pageable pageable = PageRequest.of(page,12);
+        Pageable pageable = PageRequest.of(page,ELEMENTS_PAGE);
         return recipeService.findCardsByName(term,pageable);
     }
 
+    @GetMapping("/recipes/cards/category/{id}/page/{page}")
+    public Page<RecipeCard> showCardsByCategor(@PathVariable int id, @PathVariable int page)
+    {
+        //*Create object pageable for pagination
+        Pageable pageable = PageRequest.of(page,ELEMENTS_PAGE);
+        return recipeService.findCardsByCategoryId(id,pageable);
+    }
     //*Url route
     @GetMapping("/recipes/search/{term}")
     public List<RecipeSearch> showSearch(@PathVariable String term)
