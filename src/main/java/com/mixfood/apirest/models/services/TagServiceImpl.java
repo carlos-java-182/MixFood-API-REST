@@ -3,7 +3,11 @@ package com.mixfood.apirest.models.services;
 import java.util.List;
 
 
+import com.mixfood.apirest.projections.TagName;
+import com.mixfood.apirest.projections.TagRecipeCard;
 import com.mixfood.apirest.projections.TagShort;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,7 +48,9 @@ public class TagServiceImpl implements TagService
 	}
 
 	@Override
-	public List<TagShort> finAllShort() {
+	public List<TagShort> finAllShort(
+
+	) {
 		return tagDao.finAllShort();
 	}
 
@@ -53,5 +59,13 @@ public class TagServiceImpl implements TagService
 		return tagDao.findAllByIdRecipe(id);
 	}
 
+	@Override
+	public Page<TagRecipeCard> findCardsById(int id, Pageable pageable) {
+		return tagDao.findCardsById(id, pageable);
+	}
 
+	@Override
+	public TagName findNameById(int id) {
+		return tagDao.findNameById(id);
+	}
 }

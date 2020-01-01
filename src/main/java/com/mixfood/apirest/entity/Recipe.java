@@ -53,6 +53,9 @@ public class Recipe implements Serializable
 	private long views;
     @Column(columnDefinition = "bigint default 0")
 	private long totalLikes;
+    @NotEmpty
+    @Temporal(TemporalType.DATE)
+    private Date dateBirth;
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createAt;
 	@PrePersist
@@ -126,7 +129,7 @@ public class Recipe implements Serializable
 
 	//*Relationship many to many to tags
 	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-	@ManyToMany(fetch = FetchType.LAZY)
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(
 			name = "recipes_likes",
 			joinColumns = {@JoinColumn(name = "recipe_id")},

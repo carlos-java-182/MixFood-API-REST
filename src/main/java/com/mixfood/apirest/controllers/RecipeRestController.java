@@ -5,6 +5,7 @@ import com.mixfood.apirest.entity.RecipeIngredient;
 import com.mixfood.apirest.entity.User;
 import com.mixfood.apirest.models.services.RecipeIngredientService;
 import com.mixfood.apirest.models.services.RecipeService;
+import com.mixfood.apirest.models.services.TagService;
 import com.mixfood.apirest.models.services.UserService;
 import com.mixfood.apirest.projections.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,14 +40,13 @@ public class RecipeRestController
     //*Objects declaration
     @Autowired
     private RecipeService recipeService;
-
     @Autowired
     private UserService userService;
-
-
-
+    @Autowired
+    private TagService tagService;
     @Autowired
     private RecipeIngredientService recipeIngredientService;
+
     //*Url route
     @GetMapping("/recipes")
     public List<Recipe> index()
@@ -303,6 +303,12 @@ public class RecipeRestController
         return new ResponseEntity<Recipe>(recipe,HttpStatus.OK);
     }
 
-
+    @GetMapping("/recipes/cards/tag/{id}/page/{page}")
+    public Page<TagRecipeCard> showCardsByidCategory(@PathVariable int id, @PathVariable int page)
+    {
+        //*Create object pageable for pagination
+        Pageable pageable = PageRequest.of(page,12);
+        return tagService.findCardsById(id,pageable);
+    }
 }
 

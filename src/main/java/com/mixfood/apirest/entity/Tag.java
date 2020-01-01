@@ -46,7 +46,7 @@ public class Tag implements Serializable
 	
 	//*Create aux table for relationship many to many to recipes\
 	@JsonIgnoreProperties("tags")
-	@ManyToMany(fetch = FetchType.LAZY,cascade = {CascadeType.ALL})
+	@ManyToMany(fetch = FetchType.EAGER,cascade = {CascadeType.ALL})
 	private List<Recipe> recipes = new ArrayList<>();
 
 	//*Getters and setters

@@ -3,7 +3,11 @@ package com.mixfood.apirest.models.services;
 import java.util.List;
 
 import com.mixfood.apirest.entity.Tag;
+import com.mixfood.apirest.projections.TagName;
+import com.mixfood.apirest.projections.TagRecipeCard;
 import com.mixfood.apirest.projections.TagShort;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface TagService
 {
@@ -19,5 +23,10 @@ public interface TagService
 
 	public List<TagShort> findAllByIdRecipe(int id);
 
-	
+	public Page<TagRecipeCard> findCardsById(int id, Pageable pageable);
+
+	public TagName findNameById(int id);
+
+
+
 }

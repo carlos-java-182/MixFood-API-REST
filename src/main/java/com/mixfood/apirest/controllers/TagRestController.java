@@ -2,9 +2,14 @@ package com.mixfood.apirest.controllers;
 
 import java.util.*;
 
+import com.mixfood.apirest.projections.TagName;
+import com.mixfood.apirest.projections.TagRecipeCard;
 import com.mixfood.apirest.projections.TagShort;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -71,6 +76,41 @@ public class TagRestController
 		return new ResponseEntity<Tag>(tag,HttpStatus.OK);
 	}
 
+	//!Deprecated method
+	@GetMapping("/tags/{id}/recipes/page/{page}")
+	public Page<TagRecipeCard> showCardsRecipesById(@PathVariable int id, @PathVariable int page)
+	{
+		//*Create object pageable for pagination
+		Pageable pageable = PageRequest.of(page,12);
+		return tagService.findCardsById(id,pageable);
+	}
+
+	@GetMapping("tags/{id}/name")
+	public ResponseEntity<?> showTagNameById(@PathVariable int id)
+	{
+		//*Objects declaration
+		TagName tagName = null;
+		Map<String,Object> response = new HashMap<>();
+		try
+		{
+			//*Get tag name
+			tagName = tagService.findNameById(id);
+		}
+		catch(DataAccessException e)
+		{
+			//*Response database error
+			response.put("message","Error consulting database");
+			response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		//*Id not found
+		if(tagName == null)
+		{
+			response.put("message","ID: ".concat(String.valueOf(id).concat(" not found!")));
+			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<TagName>(tagName,HttpStatus.OK);
+	}
 	//*Url route
 	@PostMapping("/tags")
 	public ResponseEntity<?> create(@Valid @RequestBody Tag tag, BindingResult result)
@@ -177,6 +217,8 @@ public class TagRestController
 		//*Return response
 		return new ResponseEntity<Tag>(updatedTag,HttpStatus.CREATED);
 	}
+
+
 
 	//*Url route
 	@PutMapping("/tags/mention/{id}")
