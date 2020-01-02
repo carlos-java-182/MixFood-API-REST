@@ -53,9 +53,6 @@ public class Recipe implements Serializable
 	private long views;
     @Column(columnDefinition = "bigint default 0")
 	private long totalLikes;
-    @NotEmpty
-    @Temporal(TemporalType.DATE)
-    private Date dateBirth;
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createAt;
 	@PrePersist

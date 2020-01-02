@@ -2,6 +2,7 @@ package com.mixfood.apirest.models.services;
 
 import com.mixfood.apirest.entity.Follower;
 import com.mixfood.apirest.models.dao.FollowerDAO;
+import com.mixfood.apirest.projections.FollowerId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,5 +39,10 @@ public class FollowerServiceImpl implements FollowerService
     @Override
     public void delete(int id) {
         followerDAO.deleteById(id);
+    }
+
+    @Override
+    public FollowerId findByIdUserAndIdFollower(int idUser, int idFollower) {
+        return  followerDAO.findByIdUserAndIdFollower(idUser,idFollower);
     }
 }

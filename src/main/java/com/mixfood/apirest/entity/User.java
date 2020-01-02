@@ -22,9 +22,6 @@ public class User implements Serializable
 	{
 
 	}
-
-
-	
     private static final long serialVersionUID = 1L;
 
 	@Id 
@@ -61,6 +58,11 @@ public class User implements Serializable
 	@NotEmpty
 	//text
 	private String description;
+	@NotEmpty
+	@Temporal(TemporalType.DATE)
+	private Date dateBirth;
+	@NotEmpty
+	private String country;
 	//@NotEmpty
 	@Size(max = 200)
 	private String token;
@@ -73,6 +75,7 @@ public class User implements Serializable
 	}
     @Temporal(TemporalType.DATE)
 	private Date updateAt;
+
     
    //@OneToMany(targetEntity = Recipe.class, cascade = CascadeType.ALL, mappedBy = "user")
 	//*Relationship one to many to recipes

@@ -13,6 +13,7 @@ import java.util.Map;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +36,9 @@ public class UserRestController
 	@Autowired
 	//*Declare object
 	private UserService userService;
-	
+
+
+
 	//*Url route
 	@GetMapping("/users")
 	public List<User> index()

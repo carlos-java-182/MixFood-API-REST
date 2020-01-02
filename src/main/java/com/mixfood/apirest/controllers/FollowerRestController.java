@@ -4,6 +4,7 @@ import com.mixfood.apirest.entity.Follower;
 import com.mixfood.apirest.entity.User;
 import com.mixfood.apirest.models.services.FollowerService;
 import com.mixfood.apirest.models.services.UserService;
+import com.mixfood.apirest.projections.FollowerId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -37,6 +38,12 @@ public class FollowerRestController
     public List<Follower> index(@PathVariable int id)
     {
         return followerService.findFollowersByIdUser(id);
+    }
+
+    @GetMapping("followers/validate/user/{idUser}/follower/{idFollower}")
+    public FollowerId showValidate(@PathVariable int idUser, @PathVariable int idFollower)
+    {
+        return  followerService.findByIdUserAndIdFollower(idUser,idFollower);
     }
 
     @PostMapping("followers")
@@ -85,5 +92,28 @@ public class FollowerRestController
         response.put("message", "The follower has been created");
         // response.put("recipe", recipe);
         return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("followers/{id}")
+    public ResponseEntity<?> delete(@PathVariable int id)
+    {
+        //*Object declaration
+        Map<String,Object> response = new HashMap<>();
+
+        try
+        {
+            //*Delete user
+            followerService.delete(id);
+        }
+        catch(DataAccessException e)
+        {
+            //*Response database error
+            response.put("message","Error removing follower from database!");
+            response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        //*Return response delete success
+        response.put("message", "The follower has been removed!");
+        return new ResponseEntity<Map<String,Object>>(response,HttpStatus.OK);
     }
 }
