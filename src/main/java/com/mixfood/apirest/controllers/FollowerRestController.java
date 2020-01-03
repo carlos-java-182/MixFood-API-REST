@@ -90,7 +90,7 @@ public class FollowerRestController
 
         //*Created user response
         response.put("message", "The follower has been created");
-        // response.put("recipe", recipe);
+        response.put("id", newFollower.getId());
         return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
     }
 

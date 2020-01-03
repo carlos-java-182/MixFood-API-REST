@@ -2,10 +2,7 @@ package com.mixfood.apirest.models.dao;
 
 import com.mixfood.apirest.entity.Recipe;
 import com.mixfood.apirest.entity.User;
-import com.mixfood.apirest.projections.RecipeCard;
-import com.mixfood.apirest.projections.RecipeLatest;
-import com.mixfood.apirest.projections.RecipeLatestUser;
-import com.mixfood.apirest.projections.RecipeSearch;
+import com.mixfood.apirest.projections.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -54,4 +51,8 @@ public interface RecipeDAO extends JpaRepository<Recipe,Integer>
     //*Find by Category
     @Query("SELECT r FROM Recipe r WHERE category_id =:id AND status = 'public'")
     public Page<RecipeCard> findCardsByCategoryId(int id, Pageable pageable);
+
+    //*Find recipe profile by id
+    @Query("SELECT r FROM Recipe r WHERE status = 'public' AND id = :id")
+    public RecipeProfile findProfileById(int id);
 }

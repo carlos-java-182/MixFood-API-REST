@@ -215,7 +215,16 @@ public class User implements Serializable
 	public void setUpdateAt(Date updateAt) {
 		this.updateAt = updateAt;
 	}
-/*
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
+	}
+
+	/*
 public List<Recipe> getRecipes() {
 	return recipes;
 }*/

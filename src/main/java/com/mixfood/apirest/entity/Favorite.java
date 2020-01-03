@@ -3,6 +3,7 @@ package com.mixfood.apirest.entity;
 import java.util.Date;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "favorites")
@@ -23,14 +24,19 @@ public class Favorite
 	private Date updateAt;
 	
 	//*Relationship one to one to user
+	@NotNull
 	@JoinColumn(name = "user_id", nullable = false)
 	@OneToOne
 	private User user;
-	
+
+	@NotNull
 	//*Relationship one to one to recipe
 	@JoinColumn(name = "recipe_id", nullable = false)
 	@OneToOne
 	private Recipe recipe;
+
+	public Favorite()
+	{}
 
 	public int getId() {
 		return id;

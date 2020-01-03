@@ -21,6 +21,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.PermitAll;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -147,6 +148,105 @@ public class RecipeRestController
         return  recipeService.findAllForCards(pageable);
     }
 
+    //Create like
+    @PostMapping("recipes/like")
+    public ResponseEntity<?> createLike(@RequestParam("idRecipe") int idRecipe, @RequestParam("idUser") int idUser)
+    {
+        //*Objects declaration
+        User user = null;
+        Recipe recipe = null;
+        Map<String,Object> response = new HashMap<>();
+
+        user = userService.findById(idUser);
+        recipe = recipeService.findById(idRecipe);
+
+        //*Ids not found
+        if(recipe == null || user == null)
+        {
+            response.put("message","ID recipe: ".concat(String.valueOf(idRecipe).concat(" not found!")));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+        }
+
+        try
+        {
+            recipe.getUsersLike().add(user);
+            recipeService.save(recipe);
+        }
+        catch(DataAccessException e)
+        {
+            //*Response database error
+            response.put("message","Error inserting into database");
+            response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        response.put("message","The like has been created.");
+        return new ResponseEntity<Map<String,Object>>(response,HttpStatus.OK);
+    }
+
+    //Delete like
+    @DeleteMapping("recipes/{idRecipe}/like/{idUser}")
+    public ResponseEntity<?> deleteLike(@PathVariable int idRecipe, @PathVariable int idUser)
+    {
+        //*Objects declaration
+        User user = null;
+        Recipe recipe = null;
+        Map<String,Object> response = new HashMap<>();
+
+        user = userService.findById(idUser);
+        recipe = recipeService.findById(idRecipe);
+
+        //*Ids not found
+        if(recipe == null || user == null)
+        {
+            response.put("message","ID recipe: ".concat(String.valueOf(idRecipe).concat(" not found!")));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+        }
+
+        try
+        {
+            recipe.getUsersLike().remove(user);
+            recipeService.save(recipe);
+        }
+        catch(DataAccessException e)
+        {
+            //*Response database error
+            response.put("message","Error inserting into database");
+            response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        response.put("message","The like has been removed.");
+        return new ResponseEntity<Map<String,Object>>(response,HttpStatus.OK);
+    }
+
+    //Find like
+    @GetMapping("recipes/{idRecipe}/like/{idUser}")
+    public ResponseEntity<?> showLike(@PathVariable int idRecipe, @PathVariable int idUser)
+    {
+        //*Objects delcaration
+        Map<String,Object> response = new HashMap<>();
+        Recipe recipe = null;
+        User user = null;
+
+        user = userService.findById(idUser);
+        recipe = recipeService.findById(idRecipe);
+
+        //*Ids not found
+        if(recipe == null || user == null)
+        {
+            response.put("message","ID recipe: ".concat(String.valueOf(idRecipe).concat(" not found!")));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+        }
+
+        if(recipe.getUsersLike().contains(user))
+        {
+            response.put("message","The like of this user already exists.");
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+        }
+
+        response.put("message","There is no like of this user for this recipe.");
+        return new ResponseEntity<Map<String,Object>>(response,HttpStatus.OK);
+    }
+
     //*Url route
     @PostMapping("/recipes")
     /**
@@ -154,6 +254,7 @@ public class RecipeRestController
      */
     public ResponseEntity<?> create(@Valid @RequestBody Recipe recipe, BindingResult result)
     {
+
         //*Objects declaration
         Recipe newRecipe = null;
         User user = null;
@@ -302,6 +403,37 @@ public class RecipeRestController
         }
         return new ResponseEntity<Recipe>(recipe,HttpStatus.OK);
     }
+
+    //*Url route
+    @GetMapping("/recipes/{id}/profile")
+    public ResponseEntity<?> showProfile(@PathVariable int id)
+    {
+        //*Objects declaration
+        RecipeProfile recipeProfile = null;
+        Map<String,Object> response = new HashMap<>();
+
+        try
+        {
+            //*Find user and save in object user
+            recipeProfile = recipeService.findProfileById(id);
+        }
+        catch(DataAccessException e)
+        {
+            //*Response database error
+            response.put("message","Error consulting database");
+            response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        //*Id not found
+        if(recipeProfile == null)
+        {
+            response.put("message","ID: ".concat(String.valueOf(id).concat(" not found!")));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<RecipeProfile>(recipeProfile,HttpStatus.OK);
+    }
+
 
     @GetMapping("/recipes/cards/tag/{id}/page/{page}")
     public Page<TagRecipeCard> showCardsByidCategory(@PathVariable int id, @PathVariable int page)
