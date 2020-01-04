@@ -2,6 +2,7 @@ package com.mixfood.apirest.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.hibernate.annotations.Type;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -47,8 +48,10 @@ public class User implements Serializable
 	@Size(max = 2)
 	@Column(nullable = false)
 	private String age;
-	@NotEmpty
-	private String gender;
+	//@NotEmpty
+	@Column(length = 6)
+	@Enumerated(EnumType.STRING)
+	private Gender gender;
   //  @Enumerated(EnumType.STRING)
 	private String status;
 	@NotEmpty
@@ -58,7 +61,8 @@ public class User implements Serializable
 	@NotEmpty
 	//text
 	private String description;
-	@NotEmpty
+	//@NotEmpty
+	@Type(type = "date")
 	@Temporal(TemporalType.DATE)
 	private Date dateBirth;
 	@NotEmpty
@@ -110,6 +114,12 @@ public class User implements Serializable
 	@ManyToMany(mappedBy = "usersLike")
 	private List<Recipe> recipesLike = new ArrayList<>();
 
+	public enum Gender
+	{
+		MALE,
+		FEMALE,
+		OTHER
+	}
 
 	//*Getters and Setters
 	public int getId() {
@@ -160,11 +170,11 @@ public class User implements Serializable
 		this.age = age;
 	}
 
-	public String getGender() {
+	public Gender getGender() {
 		return gender;
 	}
 
-	public void setGender(String gender) {
+	public void setGender(Gender gender) {
 		this.gender = gender;
 	}
 
@@ -222,6 +232,14 @@ public class User implements Serializable
 
 	public void setCountry(String country) {
 		this.country = country;
+	}
+
+	public Date getDateBirth() {
+		return dateBirth;
+	}
+
+	public void setDateBirth(Date dateBirth) {
+		this.dateBirth = dateBirth;
 	}
 
 	/*

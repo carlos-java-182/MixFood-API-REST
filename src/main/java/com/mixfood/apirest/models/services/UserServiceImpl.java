@@ -2,6 +2,8 @@ package com.mixfood.apirest.models.services;
 
 import java.util.List;
 
+import com.mixfood.apirest.projections.UserEmail;
+import com.mixfood.apirest.projections.UserInformation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.mixfood.apirest.entity.User;
@@ -21,19 +23,21 @@ public class UserServiceImpl implements UserService
     private UserDAO userDao;
     
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<User> findAll() 
 	{
 		return (List<User>) userDao.findAll();
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public User findById(int id) 
 	{
 		return userDao.findById(id).orElse(null);
 	}
 
 	@Override
+	@Transactional
 	public User save(User user) 
 	{
 		return userDao.save(user);
@@ -58,7 +62,14 @@ public class UserServiceImpl implements UserService
 		return false;
 	}
 
+	@Override
+	public UserInformation findInformationById(int id) {
+		return userDao.findInformationById(id);
+	}
 
-
-
+	@Override
+	public UserEmail findEmailById(int id)
+	{
+		return userDao.findEmailById(id);
+	}
 }

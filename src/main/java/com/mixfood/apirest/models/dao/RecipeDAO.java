@@ -12,7 +12,7 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 
-public interface RecipeDAO extends JpaRepository<Recipe,Integer>
+public interface RecipeDAO extends CrudRepository<Recipe,Integer>
 {
    /* @Query(value =  "SELECT r.id_recipe AS id, r.name AS name, r.create_at AS createAt, r.averange_ranking AS averangeRanking, r.thumb_route AS thumbRoute, r.user_id AS idUser, CONCAT(u.name,' ', u.lastname) AS username, r.category_id AS idCategory, c.name AS categoryName FROM Recipes r \n" +
             "INNER JOIN users u ON u.id_user = r.user_id " +
@@ -55,4 +55,11 @@ public interface RecipeDAO extends JpaRepository<Recipe,Integer>
     //*Find recipe profile by id
     @Query("SELECT r FROM Recipe r WHERE status = 'public' AND id = :id")
     public RecipeProfile findProfileById(int id);
+
+    @Query("SELECT r FROM Recipe r WHERE status = :status AND user_id = :id ORDER BY createAt DESC")
+    public Page<RecipeCardTable> findAllByIdUserAndStatusOrderByCreateAt(int id,String status, Pageable pageable);
+
+    @Query("SELECT r FROM Recipe r WHERE (status = :status AND user_id = :id) AND name LIKE :name%")
+    public Page<RecipeCardTable> findAllCardsTableByIdUserAndLikeName(int id,String status, String name, Pageable pageable);
+
 }

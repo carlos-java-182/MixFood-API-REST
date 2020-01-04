@@ -49,7 +49,11 @@ public class RecipeRestController
     private RecipeIngredientService recipeIngredientService;
 
     //*Url route
+
     @GetMapping("/recipes")
+    /**
+     *
+     */
     public List<Recipe> index()
     {
         return recipeService.findAll();
@@ -183,7 +187,12 @@ public class RecipeRestController
         return new ResponseEntity<Map<String,Object>>(response,HttpStatus.OK);
     }
 
-    //Delete like
+    /**
+     **Delete like
+     * @param idRecipe
+     * @param idUser
+     * @return
+     */
     @DeleteMapping("recipes/{idRecipe}/like/{idUser}")
     public ResponseEntity<?> deleteLike(@PathVariable int idRecipe, @PathVariable int idUser)
     {
@@ -218,6 +227,37 @@ public class RecipeRestController
         return new ResponseEntity<Map<String,Object>>(response,HttpStatus.OK);
     }
 
+    @DeleteMapping("recipes/{id}")
+    public ResponseEntity<?> delete(@PathVariable int id)
+    {
+        //*Objects declaration
+        Map<String,Object> response = new HashMap<>();
+        Recipe recipe = null;
+
+        recipe = recipeService.findById(id);
+
+        if(recipe == null)
+        {
+            response.put("message","ID: ".concat(String.valueOf(id).concat(" not found!")));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+        }
+
+        try
+        {
+            recipe.setStatus("removed");
+            recipeService.save(recipe);
+        }
+        catch(DataAccessException e)
+        {
+            //*Response database error
+            response.put("message","Error removing into database");
+            response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        response.put("message","The recipe has been removed.");
+        return new ResponseEntity<Map<String,Object>>(response,HttpStatus.OK);
+    }
     //Find like
     @GetMapping("recipes/{idRecipe}/like/{idUser}")
     public ResponseEntity<?> showLike(@PathVariable int idRecipe, @PathVariable int idUser)
@@ -434,7 +474,6 @@ public class RecipeRestController
         return new ResponseEntity<RecipeProfile>(recipeProfile,HttpStatus.OK);
     }
 
-
     @GetMapping("/recipes/cards/tag/{id}/page/{page}")
     public Page<TagRecipeCard> showCardsByidCategory(@PathVariable int id, @PathVariable int page)
     {
@@ -442,5 +481,75 @@ public class RecipeRestController
         Pageable pageable = PageRequest.of(page,12);
         return tagService.findCardsById(id,pageable);
     }
+
+
+    /**Recipes user routes**/
+
+    /**
+     *
+     * @param id
+     * @param status
+     * @param page
+     * @param size
+     * @return
+     */
+
+    @GetMapping("/recipes/user/{id}/{status}/page/{page}/items/{size}")
+    public ResponseEntity<?> indexUser(@PathVariable int id, @PathVariable String status, @PathVariable int page, @PathVariable int size)
+    {
+        //*Objects declaration
+        Map<String,Object> response = new HashMap<>();
+        Page<RecipeCardTable> recipeCardTables  = null;
+
+        if(!status.equals("private") && !status.equals("public"))
+        {
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+        }
+
+        try
+        {
+            Pageable pageable = PageRequest.of(page,size);
+            recipeCardTables =  recipeService.findAllByIdUserAndStatusOrderByCreateAt(id,status,pageable);
+        }
+        catch(DataAccessException e)
+        {
+            //*Response database error
+            response.put("message","Error consulting database");
+            response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<Page<RecipeCardTable>>(recipeCardTables,HttpStatus.OK);
+    }
+
+    @GetMapping("/recipes/user/{id}/{status}/name/{name}/page/{page}/items/{size}")
+    public ResponseEntity<?> indexUserLikeName(@PathVariable int id, @PathVariable String name, @PathVariable String status, @PathVariable int page, @PathVariable int size)
+    {
+        //*Objects declaration
+        Map<String,Object> response = new HashMap<>();
+        Page<RecipeCardTable> recipeCardTables  = null;
+
+        if(!status.equals("private") && !status.equals("public"))
+        {
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+        }
+
+        try
+        {
+            Pageable pageable = PageRequest.of(page,size);
+            recipeCardTables =   recipeService.findAllCardsTableByIdUserAndLikeName(id,status,name,pageable);
+        }
+        catch(DataAccessException e)
+        {
+            //*Response database error
+            response.put("message","Error consulting database");
+            response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<Page<RecipeCardTable>>(recipeCardTables,HttpStatus.OK);
+    }
+
+
+
+
 }
 

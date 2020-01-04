@@ -3,6 +3,8 @@ package com.mixfood.apirest.models.services;
 import java.util.List;
 
 import com.mixfood.apirest.entity.User;
+import com.mixfood.apirest.projections.UserEmail;
+import com.mixfood.apirest.projections.UserInformation;
 
 public interface UserService
 {
@@ -21,6 +23,10 @@ public interface UserService
     //*
    // public User findByEmail(String email);
    // public loadUserByUsername(String username);
+    public UserInformation findInformationById(int id);
+
+    public UserEmail findEmailById(int id);
+
 
 
 }

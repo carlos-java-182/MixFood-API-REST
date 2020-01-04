@@ -53,6 +53,9 @@ public class Recipe implements Serializable
 	private long views;
     @Column(columnDefinition = "bigint default 0")
 	private long totalLikes;
+
+	@Column(columnDefinition = "bigint default 0")
+	private long totalReviews;
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createAt;
 	@PrePersist
@@ -89,34 +92,20 @@ public class Recipe implements Serializable
 	private Category category;
 
 	//*Relationship many to many to ingredients
-	/*@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinTable( name ="recipes_ingredients",
-			joinColumns = { @JoinColumn(name="recipes_id") },
-			inverseJoinColumns = { @JoinColumn(name="ingredients_id")}
-
-	)
-	private List<Ingredient> ingredients = new ArrayList<>();*/
 
 	//*Relationship many to many to tags
 	@JsonIgnoreProperties("recipes")
-	@ManyToMany( fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToMany( fetch = FetchType.LAZY)// cascade = CascadeType.ALL
 	@JoinTable(name = "recipes_tags",
 		joinColumns = {@JoinColumn(name = "recipes_id")},
 		inverseJoinColumns = {@JoinColumn(name = "tags_id")}
 	)
 	private List<Tag> tags = new ArrayList<>();
 
-
 	//*Relationship one to many to images
 	@OneToMany
 	@JoinColumn(name = "recipe_id")
 	private List<Image> images = new ArrayList<Image>();
-
-	//*
-	/*@OneToMany(fetch = FetchType.LAZY)
-	@JoinColumn(name = "recipe_id")
-	private List<RankingDAO> rankings = new ArrayList<>();*/
-
 
 	@OneToMany(mappedBy = "recipe")
 	private List<RecipeIngredient> recipeIngredients = new ArrayList<>();
@@ -134,20 +123,6 @@ public class Recipe implements Serializable
 	)
 	private List<User> usersLike = new ArrayList<>();
 
-
-
-//	@ManyToMany(cascade = CascadeType.ALL, mappedBy = "recipes")
-
-	
-/*	//*Relationship many to many to tags
-	@ManyToMany(mappedBy = "recipes")   */
-
-	
-	/*public enum Status
-	{
-		active,
-		inactive
-	}*/
 	//*Getters and Setters
 	public int getId() {
 		return id;
@@ -323,6 +298,14 @@ public class Recipe implements Serializable
 
 	public void setTotalLikes(long totalLikes) {
 		this.totalLikes = totalLikes;
+	}
+
+	public long getTotalReviews() {
+		return totalReviews;
+	}
+
+	public void setTotalReviews(long totalReviews) {
+		this.totalReviews = totalReviews;
 	}
 }
 

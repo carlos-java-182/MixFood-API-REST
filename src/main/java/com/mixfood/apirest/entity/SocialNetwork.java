@@ -35,7 +35,7 @@ public class SocialNetwork implements Serializable
         YOUTUBE,
         TWITTER,
         LINKEDIN,
-        PRINTEREST
+        PINTEREST
     }
 
     public int getId() {

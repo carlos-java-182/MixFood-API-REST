@@ -5,18 +5,25 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
+import javax.jws.soap.SOAPBinding;
 import javax.validation.Valid;
 
+import com.mixfood.apirest.entity.PasswordChange;
+import com.mixfood.apirest.entity.SocialNetwork;
+import com.mixfood.apirest.models.dao.SocialNetworkDAO;
+import com.mixfood.apirest.models.services.SocialNetworkService;
+import com.mixfood.apirest.projections.SocialNetworkList;
+import com.mixfood.apirest.projections.UserEmail;
+import com.mixfood.apirest.projections.UserInformation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -37,6 +44,8 @@ public class UserRestController
 	//*Declare object
 	private UserService userService;
 
+	@Autowired
+	private SocialNetworkService socialNetworkService;
 
 
 	//*Url route
@@ -75,7 +84,166 @@ public class UserRestController
 		}
 		return new ResponseEntity<User>(user,HttpStatus.OK);
 	}
-	
+
+	@GetMapping("/users/settings/information/{id}")
+	public ResponseEntity<?> showInformation(@PathVariable int id)
+	{
+		//*Objects declaration
+		UserInformation userInformation = null;
+		Map<String,Object> response = new HashMap<>();
+
+		try
+		{
+			//*Find user and save in object user
+			userInformation = userService.findInformationById(id);
+		}
+		catch(DataAccessException e)
+		{
+			//*Response database error
+			response.put("message","Error consulting database");
+			response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		//*Id not found
+		if(userInformation == null)
+		{
+			response.put("message","ID: ".concat(String.valueOf(id).concat(" not found!")));
+			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<UserInformation>(userInformation,HttpStatus.OK);
+	}
+
+	@GetMapping("/users/settings/email/{id}")
+	public ResponseEntity<?> showEmail(@PathVariable int id)
+	{
+		//*Objects declaration
+		UserEmail userEmail = null;
+		Map<String,Object> response = new HashMap<>();
+
+		try
+		{
+			//*Find user and save in object user
+			userEmail = userService.findEmailById(id);
+			System.out.println("EMAIL: "+userEmail);
+		}
+		catch(DataAccessException e)
+		{
+			//*Response database error
+			response.put("message","Error consulting database");
+			response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		//*Id not found
+		if(userEmail == null)
+		{
+			response.put("message","ID: ".concat(String.valueOf(id).concat(" not found!")));
+			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<UserEmail>(userEmail,HttpStatus.OK);
+	}
+
+	@GetMapping("/users/settings/socialnetworks/{id}")
+	public ResponseEntity<?> showSocialNetworks(@PathVariable int id)
+	{
+		//*Objects declaration
+		List<SocialNetworkList> socialNetworkList = null;
+		Map<String,Object> response = new HashMap<>();
+		try
+		{
+			//*Find user and save in object user
+			socialNetworkList = socialNetworkService.findListbyId(id);
+		}
+		catch(DataAccessException e)
+		{
+			//*Response database error
+			response.put("message","Error consulting database");
+			response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		//*Id not found
+		if(socialNetworkList == null)
+		{
+			response.put("message","ID: ".concat(String.valueOf(id).concat(" not found!")));
+			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+		}
+
+		return new ResponseEntity<List<SocialNetworkList>>(socialNetworkList,HttpStatus.OK);
+	}
+
+	@PutMapping("/users/settings/socialnetworks/{id}")
+	public ResponseEntity<?> updateSocialNetworks(@RequestBody SocialNetwork socialNetwork, @PathVariable int id)
+	{
+		//*Create objects
+		SocialNetwork actualNetwork = null;
+		User user = null;
+		Map<String,Object> response = new HashMap<>();
+
+		user = userService.findById(id);
+		actualNetwork = socialNetworkService.findByIdUserAndNetwork(id,socialNetwork.getNetwork());
+
+		try
+		{
+			//*Add new user data to actual user
+			if(actualNetwork == null)
+			{
+				socialNetwork.setUser(user);
+				socialNetworkService.save(socialNetwork);
+				//*Add success response to map
+				response.put("message", "The socialNetwork has been created!");
+				//*Return response
+				return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
+			}
+			else
+			{
+				actualNetwork.setLink(socialNetwork.getLink());
+				socialNetworkService.save(actualNetwork);
+				//*Add success response to map
+				response.put("message", "The socialNetwork has been update!");
+				//*Return response
+				return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
+			}
+		}
+		catch(DataAccessException e)
+		{
+			//*Response database error
+			response.put("message","Error updating user in database!");
+			response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+			//*Return response and http status
+			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+
+	}
+
+	@DeleteMapping("/users/settings/socialnetworks/{network}/{id}")
+	public ResponseEntity<?> deleteSocialNetworks(@PathVariable SocialNetwork.Network network, @PathVariable int id)
+	{
+		//*Create objects
+		SocialNetwork actualNetwork = null;
+		Map<String,Object> response = new HashMap<>();
+
+		try
+		{
+			actualNetwork = socialNetworkService.findByIdUserAndNetwork(id,network);
+			int idSocial = actualNetwork.getId();
+			socialNetworkService.delete(idSocial);
+		}
+		catch(DataAccessException e)
+		{
+			//*Response database error
+			response.put("message","Error removing socialnetwork in database!");
+			response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+			//*Return response and http status
+			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		//*Return response delete success
+		response.put("message", "The socialnetwork has been removed!");
+		return new ResponseEntity<Map<String,Object>>(response,HttpStatus.OK);
+	}
 	//*Url route
 	@PostMapping("/users")
 	public ResponseEntity<?> create(@Valid @RequestBody User user, BindingResult result)
@@ -119,7 +287,120 @@ public class UserRestController
 		response.put("user", newUser);
 		return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
 	}
-	
+
+	@PutMapping("/users/settings/information/{id}")
+	public ResponseEntity<?> updateInformation(@RequestBody User userInformation, @PathVariable int id)
+	{
+		//*Create objects
+		User actualUser = null;
+		User updatedUser = null;
+		Map<String,Object> response = new HashMap<>();
+
+		//*Find user by id
+		actualUser = userService.findById(id);
+
+		System.out.println("NAME: "+actualUser.getName());
+
+		//*Validate if user does exist
+		if(actualUser == null)
+		{
+			//*Add message to map
+			response.put("message","ID: ".concat(String.valueOf(id).concat(" does not exist!")));
+			//*Return response with http status
+			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+		}
+
+		try
+		{
+			//*Add new user data to actual user
+
+			actualUser.setName(userInformation.getName());
+			actualUser.setLastname(userInformation.getLastname());
+
+			actualUser.setDateBirth(userInformation.getDateBirth());
+			actualUser.setDescription(userInformation.getDescription());
+			actualUser.setGender(userInformation.getGender());
+			actualUser.setCountry(userInformation.getCountry());
+
+			//*Update user
+			updatedUser = userService.save(actualUser);
+		}
+		catch(DataAccessException e)
+		{
+			//*Response database error
+			response.put("message","Error updating user in database!");
+			response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+			//*Return response and http status
+			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+
+		//*Add success response to map
+		response.put("message", "The user has been updated!");
+		response.put("user", updatedUser);
+		//*Return response
+
+		return new ResponseEntity<User>(updatedUser,HttpStatus.CREATED);
+
+	}
+
+	@PutMapping("/users/settings/password/{id}")
+	public ResponseEntity<?> updatePassword(@RequestBody PasswordChange passwordChange, @PathVariable int id)
+	{
+		//*Create objects
+		User actualUser = null;
+		User updatedUser = null;
+		Map<String,Object> response = new HashMap<>();
+
+		//*Find user by id
+		actualUser = userService.findById(id);
+
+		System.out.println("NAME: "+actualUser.getName());
+
+		//*Validate if user does exist
+		if(actualUser == null)
+		{
+			//*Add message to map
+			response.put("message","ID: ".concat(String.valueOf(id).concat(" does not exist!")));
+			//*Return response with http status
+			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+		}
+
+		System.out.println("PASSWORD: "+actualUser.getPassword().toString());
+		System.out.println("PASSWORD: "+passwordChange.getActualPassword());
+		System.out.println(actualUser.getPassword().equals("password"));
+		//if(actualUser.getPassword() != "password")
+		//{
+			//*Add message to map
+			response.put("error","passwordwrong");
+			response.put("message","The actual password is wrong");
+			//*Return response with http status
+		//	return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+		//}
+		try
+		{
+			//*Add new user data to actual user
+			actualUser.setPassword(passwordChange.getNewPassword());
+			//*Update user
+			updatedUser = userService.save(actualUser);
+		}
+		catch(DataAccessException e)
+		{
+			//*Response database error
+			response.put("message","Error updating user in database!");
+			response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+			//*Return response and http status
+			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		//*Add success response to map
+		response.put("message", "The password has been updated!");
+		//*Return response
+		return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
+	}
+
+
+
 	//*Url route
 	@PutMapping("/users/{id}")
 	public ResponseEntity<?> update(@Valid @RequestBody User user, BindingResult result, @PathVariable int id)

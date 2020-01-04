@@ -26,16 +26,19 @@ public class RecipeServiceImpl implements  RecipeService
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Recipe findById(int id) {
         return recipeDAO.findById(id).orElse(null);
     }
 
     @Override
+    @Transactional
     public Recipe save(Recipe recipe) {
         return recipeDAO.save(recipe);
     }
 
     @Override
+    @Transactional
     public void delete(int id) {
         recipeDAO.deleteById(id);
     }
@@ -84,4 +87,19 @@ public class RecipeServiceImpl implements  RecipeService
     public RecipeProfile findProfileById(int id) {
         return recipeDAO.findProfileById(id);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<RecipeCardTable> findAllByIdUserAndStatusOrderByCreateAt(int id,String status, Pageable pageable)
+    {
+        return recipeDAO.findAllByIdUserAndStatusOrderByCreateAt(id,status,pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<RecipeCardTable> findAllCardsTableByIdUserAndLikeName(int id, String status, String name, Pageable pageable) {
+        return recipeDAO.findAllCardsTableByIdUserAndLikeName(id,status,name,pageable);
+    }
+
+
 }
