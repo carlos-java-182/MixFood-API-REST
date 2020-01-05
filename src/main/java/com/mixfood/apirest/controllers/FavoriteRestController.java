@@ -6,9 +6,13 @@ import com.mixfood.apirest.entity.User;
 import com.mixfood.apirest.models.services.FavoriteService;
 import com.mixfood.apirest.models.services.RecipeService;
 import com.mixfood.apirest.models.services.UserService;
+import com.mixfood.apirest.projections.FavoriteCard;
 import com.mixfood.apirest.projections.FavoriteId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -39,10 +43,11 @@ public class FavoriteRestController {
     private RecipeService recipeService;
 
     //*Url route
-    @GetMapping("favorites/{id}")
-    public List<Favorite> index(@PathVariable int id)
+    @GetMapping("favorites/{id}/page/{page}/items/{items}")
+    public Page<FavoriteCard> index(@PathVariable int id, @PathVariable int page, @PathVariable int items)
     {
-        return favoriteService.findAllByIdUser(id);
+        Pageable pageable = PageRequest.of(page,items);
+        return favoriteService.findAllByIdUser(id,pageable);
     }
 
 
@@ -130,7 +135,6 @@ public class FavoriteRestController {
         response.put("id",favoriteId.getId());
         return new ResponseEntity<Map<String,Object>>(response,HttpStatus.OK);
     }
-
 
     //*Url route
     @DeleteMapping("favorites/recipe/{idRecipe}/user/{idUser}")

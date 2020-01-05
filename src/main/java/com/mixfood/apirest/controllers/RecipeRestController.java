@@ -59,7 +59,13 @@ public class RecipeRestController
         return recipeService.findAll();
     }
 
-    //*Url route
+
+    /**
+     *
+     * @param id
+     * @param size
+     * @return
+     */
     @GetMapping("/recipes/latests/{id}/items/{size}")
     public List<RecipeLatest> indexRecipeLatests(@PathVariable int id, @PathVariable int size)
     {
@@ -67,7 +73,12 @@ public class RecipeRestController
         return recipeService.findRecentsByIdUser(id, pageable);
     }
 
-    //*Url route
+    /**
+     *
+     * @param id
+     * @param size
+     * @return
+     */
     @GetMapping("/recipes/users/latests/{id}/items/{size}")
     public ResponseEntity<?> showLatestUser(@PathVariable int id, @PathVariable int size)
     {
@@ -104,7 +115,12 @@ public class RecipeRestController
         //return recipeService.findLatestsByIdUser(id,pageable);
     }
 
-    //*Url route
+    /**
+     *
+     * @param id
+     * @param size
+     * @return
+     */
     @GetMapping("/recipes/cards/featured/{id}/items/{size}")
     public List<RecipeLatest> indexCardsFeatured(@PathVariable int id, @PathVariable int size)
     {
@@ -113,7 +129,13 @@ public class RecipeRestController
         return recipeService.findCardsByAverangeRankingAndIdUser(id, pageable);
     }
 
-    //*Url route
+    /**
+     *
+     * @param term
+     * @param id
+     * @param page
+     * @return
+     */
     @GetMapping("/recipes/cards/search/{term}/{id}/page/{page}")
     public Page<RecipeCard> showCardsByNameAndCategory(@PathVariable String term, @PathVariable int id, @PathVariable int page)
     {
@@ -122,7 +144,12 @@ public class RecipeRestController
         return recipeService.findACardsByNameAndCategory(term, id, pageable);
     }
 
-    //*Url route
+    /**
+     *
+     * @param term
+     * @param page
+     * @return
+     */
     @GetMapping("/recipes/cards/search/{term}/page/{page}")
     public Page<RecipeCard> showCardsByName(@PathVariable String term,@PathVariable int page)
     {
@@ -287,11 +314,13 @@ public class RecipeRestController
         return new ResponseEntity<Map<String,Object>>(response,HttpStatus.OK);
     }
 
-    //*Url route
-    @PostMapping("/recipes")
     /**
-     **Create Recipe
+     **Create recipe
+     * @param recipe
+     * @param result
+     * @return
      */
+    @PostMapping("/recipes")
     public ResponseEntity<?> create(@Valid @RequestBody Recipe recipe, BindingResult result)
     {
 

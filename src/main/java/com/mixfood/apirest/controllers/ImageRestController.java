@@ -37,6 +37,12 @@ public class ImageRestController
     @Autowired
     private RecipeService recipeService;
 
+    /**
+     **This function
+     * @param images
+     * @param result
+     * @return
+     */
     @PostMapping("images")
     public ResponseEntity<?> create(@Valid @RequestBody List<Image> images, BindingResult result)
     {
@@ -83,17 +89,23 @@ public class ImageRestController
         return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
     }
 
+    /**
+     *
+     * @param files
+     * @param id
+     * @param principalImage
+     * @return
+     */
     @PostMapping("images/upload")
     public ResponseEntity<?> uploadImage(@RequestParam("images")MultipartFile[] files, @RequestParam("id") int id, @RequestParam("principalImage") String principalImage)
     {
         //*Object declaration
         Map<String,Object> response = new HashMap<>();
-        // User user = userService.findById(id);
+
         if (files.length > 0)
         {
             //*Find recipe
             Recipe recipe = recipeService.findById(id);
-
             for (MultipartFile file: files)
             {
                 //*Get file type
@@ -116,6 +128,7 @@ public class ImageRestController
                 Image image = new Image();
                 if(principalImage.equals(file.getOriginalFilename()))
                 {
+
                     image.setPrincipal(true);
                 }
                 image.setRouteImage(fileName);
