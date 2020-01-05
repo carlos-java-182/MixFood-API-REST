@@ -1,12 +1,10 @@
 package com.mixfood.apirest.controllers;
 
+import com.mixfood.apirest.entity.Category;
 import com.mixfood.apirest.entity.Recipe;
 import com.mixfood.apirest.entity.RecipeIngredient;
 import com.mixfood.apirest.entity.User;
-import com.mixfood.apirest.models.services.RecipeIngredientService;
-import com.mixfood.apirest.models.services.RecipeService;
-import com.mixfood.apirest.models.services.TagService;
-import com.mixfood.apirest.models.services.UserService;
+import com.mixfood.apirest.models.services.*;
 import com.mixfood.apirest.projections.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -47,6 +45,9 @@ public class RecipeRestController
     private TagService tagService;
     @Autowired
     private RecipeIngredientService recipeIngredientService;
+
+    @Autowired
+    CategoryService categoryService;
 
     //*Url route
 
@@ -260,6 +261,7 @@ public class RecipeRestController
         //*Objects declaration
         Map<String,Object> response = new HashMap<>();
         Recipe recipe = null;
+        Category category = null;
 
         recipe = recipeService.findById(id);
 
@@ -273,6 +275,10 @@ public class RecipeRestController
         {
             recipe.setStatus("removed");
             recipeService.save(recipe);
+            category = categoryService.findById(recipe.getCategory().getId());
+            long actualCountCategories = category.getAmountRecipes();
+            category.setAmountRecipes(actualCountCategories - 1);
+
         }
         catch(DataAccessException e)
         {
