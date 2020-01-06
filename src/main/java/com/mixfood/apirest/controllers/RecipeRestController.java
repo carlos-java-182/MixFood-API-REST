@@ -372,6 +372,10 @@ public class RecipeRestController
         return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
     }
 
+
+
+
+
     @PostMapping("recipes/ingredients")
     public ResponseEntity<?> createIngredients(@Valid @RequestBody List<RecipeIngredient> recipeIngredients, BindingResult result)
     {
@@ -417,16 +421,21 @@ public class RecipeRestController
     }
 
     //*Url route
-    @PutMapping("/recipes/views/{id}")
-    public ResponseEntity<?> updateView( @PathVariable int id)
+    @PutMapping("/recipes/views/{idRecipe}/user/{idUser}")
+    public ResponseEntity<?> updateView( @PathVariable int idRecipe, @PathVariable int idUser)
     {
         //*Find tag
-        Recipe actualRecipe = recipeService.findById(id);
+        Recipe actualRecipe = recipeService.findById(idRecipe);
 
         //*Create objects
         Recipe updatedRecipe = null;
         Map<String,Object> response = new HashMap<>();
 
+        if(!actualRecipe.getStatus().equals("public") || actualRecipe.getUser().getId() == idUser)
+        {
+            response.put("message","UPS!!! Your area a bot");
+            return  new ResponseEntity<Map<String,Object>>(response,HttpStatus.NOT_FOUND);
+        }
         try
         {
             //*Add view

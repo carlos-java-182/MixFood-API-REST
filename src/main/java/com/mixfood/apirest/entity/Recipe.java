@@ -38,7 +38,7 @@ public class Recipe implements Serializable
 	@Column(length = 655535, columnDefinition = "TEXT", nullable = false)
 	@Type(type="text")
 	private String preparationSteps;
-	@Size(max = 80)
+	@Size(max = 100)
 	private String videoFrame;
 	//@Enumerated(EnumType.STRING)
 	private String status;

@@ -18,6 +18,7 @@ public interface RecipeProfile
     String getPreparationTime();
     String getVideoFrame();
     String getDescription();
+    String getThumbRoute();
     Date getCreateAt();
     List<Image> getImages();
     User getUser();
@@ -32,6 +33,11 @@ public interface RecipeProfile
         String getName();
     }
 
+    interface Image
+    {
+        int getId();
+        String getRouteImage();
+    }
     interface User
     {
         int getId();
@@ -42,7 +48,6 @@ public interface RecipeProfile
 
     interface Ingredients{
         int getId();
-        //String getName();
         String getQuantity();
         Ingredient getIngredient();
     }
