@@ -191,6 +191,7 @@ public class ImageRestController
         Resource resource = null;
 
         try
+
         {
             resource = new UrlResource((fileRoute.toUri()));
         } catch (MalformedURLException e)
