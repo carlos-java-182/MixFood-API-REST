@@ -27,7 +27,7 @@ public interface CategoryDAO extends CrudRepository<Category,Integer>
     @Query("SELECT c FROM Category c WHERE c.id = :id")
     public CategoryName findNameById(int id);
 
-    @Query("SELECT c FROM Category ORDER BY amountRecipes DESC")
+    @Query("SELECT c FROM Category c ORDER BY amountRecipes DESC")
     public Page<CategoryCard> findAllCards(Pageable pageable);
 
 

@@ -145,8 +145,6 @@ public class ImageRestController
         }
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
     }
-
-
     @GetMapping("uploads/recipes/{imageName:.+}")
     public ResponseEntity<Resource> showImage(@PathVariable String imageName)
     {
@@ -171,4 +169,51 @@ public class ImageRestController
 
         return new ResponseEntity<Resource>(resource,headers,HttpStatus.OK);
     }
+
+    @GetMapping("uploads/{imageName:.+}/type/{type}")
+    public ResponseEntity<Resource> showImageUser(@PathVariable String imageName, @PathVariable typeImage type)
+    {
+        Path fileRoute = null;
+        //*Validate get type image
+        if(type == typeImage.RECIPE)
+        {
+            fileRoute = Paths.get("uploads/recipes").resolve(imageName).toAbsolutePath();
+        }
+        else if(type == typeImage.USER)
+        {
+            fileRoute = Paths.get("uploads/users").resolve(imageName).toAbsolutePath();
+        }
+        else if(type == typeImage.CATEGORY)
+        {
+            fileRoute = Paths.get("uploads/categories").resolve(imageName).toAbsolutePath();
+        }
+
+        Resource resource = null;
+
+        try
+        {
+            resource = new UrlResource((fileRoute.toUri()));
+        } catch (MalformedURLException e)
+        {
+            e.printStackTrace();
+        }
+
+        if(!((UrlResource) resource).exists() && !((UrlResource) resource).isReadable())
+        {
+            throw new RuntimeException("Error to load image: "+imageName);
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION,"attachment; filename=\"" +((UrlResource) resource).getFilename() + "\"");
+
+        return new ResponseEntity<Resource>(resource,headers,HttpStatus.OK);
+    }
+
+    public enum typeImage
+    {
+        USER,
+        RECIPE,
+        CATEGORY
+    }
+
 }
