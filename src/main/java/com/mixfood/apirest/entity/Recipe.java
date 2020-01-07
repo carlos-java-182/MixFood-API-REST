@@ -31,7 +31,7 @@ public class Recipe implements Serializable
 	@Size(max = 45)
 	@Column(nullable = false, unique = false)
 	private String name;
-	@Size(max = 5)
+	@Size(max = 100)
 	@Column(nullable = false)
 	private String preparationTime;
 	@NotEmpty
