@@ -27,6 +27,8 @@ public interface TagService
 
 	public TagName findNameById(int id);
 
+	public Page<TagShort> findALLTrendings(Pageable pageable);
+
 
 
 }

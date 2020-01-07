@@ -6,6 +6,7 @@ import com.mixfood.apirest.projections.CategoryCard;
 import com.mixfood.apirest.projections.CategoryList;
 import com.mixfood.apirest.projections.CategoryName;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -45,9 +46,10 @@ public class CategoryServiceImpl implements CategoryService
     }
 
     @Override
-    public List<CategoryList> findAllForList() {
-        return categoryDAO.findAllForList();
+    public Page<CategoryList> findAllForList(Pageable pageable) {
+        return categoryDAO.findAllForList(pageable);
     }
+
 
     @Override
     public List<CategoryList> findListByIdUser(int id, Pageable pageable) {
@@ -57,5 +59,10 @@ public class CategoryServiceImpl implements CategoryService
     @Override
     public CategoryName findNameById(int id) {
         return categoryDAO.findNameById(id);
+    }
+
+    @Override
+    public Page<CategoryCard> findAllCards(Pageable pageable) {
+        return categoryDAO.findAllCards(pageable);
     }
 }

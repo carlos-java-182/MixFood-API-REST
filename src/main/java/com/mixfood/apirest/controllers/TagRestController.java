@@ -46,6 +46,12 @@ public class TagRestController
 		return tagService.finAllShort();
 	}
 
+	@GetMapping("/tags/trendings/page/{page}/items/{items}")
+	public Page<TagShort> showTrnginds(@PathVariable int page, @PathVariable int items)
+	{
+		Pageable pageable = PageRequest.of(page,items);
+		return tagService.findALLTrendings(pageable);
+	}
 	//*Url route
 	@GetMapping("/tags/{id}")
 	public ResponseEntity<?> show(@PathVariable int id)

@@ -7,6 +7,7 @@ import com.mixfood.apirest.projections.CategoryList;
 import com.mixfood.apirest.projections.CategoryName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -38,16 +39,18 @@ public class CategoryRestController
     }
 
     //*Url route
-    @GetMapping("/categories/cards")
-    public List<CategoryCard> indexCard()
+    @GetMapping("/categories/cards/page/{page}/items/{items}")
+    public Page<CategoryCard> indexCard(@PathVariable int page, @PathVariable int items)
     {
-        return categoryService.findAllForCards();
+        Pageable pageable = PageRequest.of(page,items);
+        return categoryService.findAllCards(pageable);
     }
 
     @GetMapping("categories/list")
-    public List<CategoryList> indexList()
+    public Page<CategoryList> indexList()
     {
-        return categoryService.findAllForList();
+        Pageable pageable = PageRequest.of(0,10);
+        return categoryService.findAllForList(pageable);
     }
 
     @GetMapping("categories/user/list/{id}/items/{size}")

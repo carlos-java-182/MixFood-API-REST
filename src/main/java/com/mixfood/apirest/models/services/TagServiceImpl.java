@@ -68,4 +68,9 @@ public class TagServiceImpl implements TagService
 	public TagName findNameById(int id) {
 		return tagDao.findNameById(id);
 	}
+
+	@Override
+	public Page<TagShort> findALLTrendings(Pageable pageable) {
+		return tagDao.findALLTrendings(pageable);
+	}
 }

@@ -26,4 +26,7 @@ public interface TagDao extends CrudRepository<Tag,Integer>
 
     @Query("SELECT t FROM Tag t WHERE id =:id")
     public TagName findNameById(int id);
+
+    @Query("SELECT t FROM Tag t ORDER BY mentions DESC")
+    public Page<TagShort> findALLTrendings(Pageable pageable);
 }

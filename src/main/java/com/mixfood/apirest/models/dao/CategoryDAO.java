@@ -4,6 +4,7 @@ import com.mixfood.apirest.entity.Category;
 import com.mixfood.apirest.projections.CategoryCard;
 import com.mixfood.apirest.projections.CategoryList;
 import com.mixfood.apirest.projections.CategoryName;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -17,7 +18,7 @@ public interface CategoryDAO extends CrudRepository<Category,Integer>
     public List<CategoryCard> findAllForCards();
 
     @Query("SELECT c FROM Category c ORDER BY amountRecipes DESC")
-    public  List<CategoryList> findAllForList();
+    public Page<CategoryList> findAllForList(Pageable pageable);
 
     @Query(value = "SELECT DISTINCT c.id_category AS id, c.name AS name, amount_recipes AS amountRecipes FROM categories c INNER JOIN recipes r ON c.id_category = r.category_id WHERE r.user_id =:id",
             nativeQuery = true)
@@ -25,5 +26,11 @@ public interface CategoryDAO extends CrudRepository<Category,Integer>
 
     @Query("SELECT c FROM Category c WHERE c.id = :id")
     public CategoryName findNameById(int id);
+
+    @Query("SELECT c FROM Category ORDER BY amountRecipes DESC")
+    public Page<CategoryCard> findAllCards(Pageable pageable);
+
+
+
 
 }
