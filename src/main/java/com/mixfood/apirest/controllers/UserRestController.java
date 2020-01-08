@@ -173,6 +173,41 @@ public class UserRestController
 		return new ResponseEntity<List<SocialNetworkList>>(socialNetworkList,HttpStatus.OK);
 	}
 
+	@PutMapping("/users/settings/email/{id}")
+	public ResponseEntity<?> updateEmail(@RequestBody User user, @PathVariable int id)
+	{
+		//*Objects declaration
+		User actualUser = null;
+		Map<String,Object> response = new HashMap<>();
+		actualUser = userService.findById(id);
+		//*Validate if user does exist
+		if(actualUser == null)
+		{
+			//*Add message to map
+			response.put("message","ID: ".concat(String.valueOf(id).concat(" does not exist!")));
+			//*Return response with http status
+			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+		}
+		try
+		{
+			actualUser.setEmail(user.getEmail());
+			userService.save(actualUser);
+		}
+		catch(DataAccessException e)
+		{
+			//*Response database error
+			response.put("message","Error updating email in database!");
+			response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+			//*Return response and http status
+			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		//*Add success response to map
+		response.put("message", "The email has been updated!");
+		//*Return response
+		return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
+	}
+
 	@PutMapping("/users/settings/socialnetworks/{id}")
 	public ResponseEntity<?> updateSocialNetworks(@RequestBody SocialNetwork socialNetwork, @PathVariable int id)
 	{
@@ -288,6 +323,7 @@ public class UserRestController
 		return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
 	}
 
+	/**Update user information/
 	@PutMapping("/users/settings/information/{id}")
 	public ResponseEntity<?> updateInformation(@RequestBody User userInformation, @PathVariable int id)
 	{
