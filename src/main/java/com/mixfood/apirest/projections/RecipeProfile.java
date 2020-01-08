@@ -43,6 +43,7 @@ public interface RecipeProfile
         int getId();
         String getLastname();
         String getName();
+        String getPorfileimageRoute();
         String getDescription();
     }
 

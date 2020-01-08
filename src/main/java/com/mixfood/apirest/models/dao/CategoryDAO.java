@@ -18,7 +18,10 @@ public interface CategoryDAO extends CrudRepository<Category,Integer>
     public List<CategoryCard> findAllForCards();
 
     @Query("SELECT c FROM Category c ORDER BY amountRecipes DESC")
-    public Page<CategoryList> findAllForList(Pageable pageable);
+    public Page<CategoryList> findListLimit(Pageable pageable);
+
+    @Query("SELECT c FROM Category c ORDER BY name")
+    public List<CategoryList> findAllList();
 
     @Query(value = "SELECT DISTINCT c.id_category AS id, c.name AS name, amount_recipes AS amountRecipes FROM categories c INNER JOIN recipes r ON c.id_category = r.category_id WHERE r.user_id =:id",
             nativeQuery = true)

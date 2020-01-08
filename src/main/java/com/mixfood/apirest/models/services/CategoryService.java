@@ -16,7 +16,9 @@ public interface CategoryService
     public Category save(Category category);
     public void delete(int id);
     public List<CategoryCard> findAllForCards();
-    public Page<CategoryList> findAllForList(Pageable pageable);
+    public Page<CategoryList> findListLimit(Pageable pageable);
+
+    public List<CategoryList> findAllList();
 
     public List<CategoryList> findListByIdUser(int id, Pageable pageable);
     public CategoryName findNameById(int id);

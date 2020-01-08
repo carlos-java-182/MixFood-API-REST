@@ -46,11 +46,17 @@ public class CategoryRestController
         return categoryService.findAllCards(pageable);
     }
 
-    @GetMapping("categories/list")
-    public Page<CategoryList> indexList()
+    @GetMapping("categories/listlimit")
+    public Page<CategoryList> indexListLimit()
     {
         Pageable pageable = PageRequest.of(0,10);
-        return categoryService.findAllForList(pageable);
+        return categoryService.findListLimit(pageable);
+    }
+
+    @GetMapping("categories/list")
+    public List<CategoryList> indexList()
+    {
+        return categoryService.findAllList();
     }
 
     @GetMapping("categories/user/list/{id}/items/{size}")
