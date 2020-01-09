@@ -4,9 +4,13 @@ import com.mixfood.apirest.entity.Follower;
 import com.mixfood.apirest.entity.User;
 import com.mixfood.apirest.models.services.FollowerService;
 import com.mixfood.apirest.models.services.UserService;
+import com.mixfood.apirest.projections.FollowerCard;
 import com.mixfood.apirest.projections.FollowerId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -34,10 +38,11 @@ public class FollowerRestController
     private UserService userService;
 
     //*Url route
-    @GetMapping("followers/{id}")
-    public List<Follower> index(@PathVariable int id)
+    @GetMapping("followers/{id}/page/{page}/items/{items}")
+    public Page<FollowerCard> showFolloers(@PathVariable int id, @PathVariable int page, @PathVariable int items)
     {
-        return followerService.findFollowersByIdUser(id);
+        Pageable pageable = PageRequest.of(page,items);
+        return followerService.findFollowersByIdUser(id,pageable);
     }
 
     @GetMapping("followers/validate/user/{idUser}/follower/{idFollower}")

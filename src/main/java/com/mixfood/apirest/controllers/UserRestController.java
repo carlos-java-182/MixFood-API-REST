@@ -323,7 +323,7 @@ public class UserRestController
 		return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
 	}
 
-	/**Update user information/
+	/**Update user information**/
 	@PutMapping("/users/settings/information/{id}")
 	public ResponseEntity<?> updateInformation(@RequestBody User userInformation, @PathVariable int id)
 	{
