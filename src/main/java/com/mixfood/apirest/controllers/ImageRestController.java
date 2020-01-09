@@ -6,6 +6,7 @@ import com.mixfood.apirest.entity.Recipe;
 import com.mixfood.apirest.entity.User;
 import com.mixfood.apirest.models.services.ImageService;
 import com.mixfood.apirest.models.services.RecipeService;
+import com.mixfood.apirest.models.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.UrlResource;
 import org.springframework.dao.DataAccessException;
@@ -19,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import org.springframework.core.io.Resource;
 import javax.validation.Valid;
+import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.FileNameMap;
@@ -40,6 +42,8 @@ public class ImageRestController
     private ImageService imageService;
     @Autowired
     private RecipeService recipeService;
+    @Autowired
+    private UserService userService;
 
     /**
      **This function
@@ -119,9 +123,11 @@ public class ImageRestController
                 //*Create file route
                 Path fileRoute = Paths.get("uploads/recipes").resolve(fileName).toAbsolutePath();
 
-                try {
+                try
+                {
                     Files.copy(file.getInputStream(),fileRoute);
-                } catch (IOException e) {
+                }
+                catch (IOException e) {
                     //*Response database error
                     response.put("message","Error updating image from database!");
                     response.put("error",e.getMessage().concat(" : ").concat(e.getCause().getMessage()));
@@ -208,6 +214,65 @@ public class ImageRestController
         headers.add(HttpHeaders.CONTENT_DISPOSITION,"attachment; filename=\"" +((UrlResource) resource).getFilename() + "\"");
 
         return new ResponseEntity<Resource>(resource,headers,HttpStatus.OK);
+    }
+
+    @PostMapping("images/uploads/users")
+    public ResponseEntity<?> updateImage(@RequestParam("file") MultipartFile file, @RequestParam("id") int id)
+    {
+        //*Variables delcaration
+        String oldImage = "";
+        //*Object declaration
+        Map<String,Object> response = new HashMap<>();
+        User user = null;
+        user = userService.findById(id);
+
+        if(user == null)
+        {
+            response.put("message","ID: ".concat(String.valueOf(id).concat(" not found!")));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+        }
+
+        String fileType = "."+file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".")+1);
+        //*Create unique file name
+        String fileName = "UserImage_"+UUID.randomUUID().toString()+fileType;
+        //*Create file route
+        Path fileRoute = Paths.get("uploads/users").resolve(fileName).toAbsolutePath();
+
+        try
+        {
+            Files.copy(file.getInputStream(),fileRoute);
+        }
+        catch (IOException e) {
+            //*Response database error
+            response.put("message","Error updating image from database!");
+            response.put("error",e.getMessage().concat(" : ").concat(e.getCause().getMessage()));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        //*Remove image
+        if(!oldImage.equals("defaultprofile.png"))
+        {
+            //*Get image route
+            oldImage = user.getPorfileimageRoute();
+            //*Get absolute path image
+            Path oldFileRoute = Paths.get("uploads/users").resolve(oldImage).toAbsolutePath();
+            //*Convert path to file
+            File oldFile = oldFileRoute.toFile();
+
+            if(oldFile.exists() && oldFile.canRead())
+            {
+                oldFile.delete();
+            }
+        }
+
+        //*Create Object image
+        user.setPorfileimageRoute(fileName);
+        userService.save(user);
+
+        response.put("message","update image success!");
+        response.put("imageRoute",fileName);
+
+        return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
     }
 
     public enum typeImage
