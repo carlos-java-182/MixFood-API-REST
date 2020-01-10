@@ -24,6 +24,7 @@ public interface RecipeService
     public RecipeProfile findProfileById(int id);
     public Page<RecipeCardTable> findAllByIdUserAndStatusOrderByCreateAt(int id,String status, Pageable pageable);
     public Page<RecipeCardTable> findAllCardsTableByIdUserAndLikeName(int id,String status, String name, Pageable pageable);
+    public RecipeEdit findEditById(int id);
 
 
 

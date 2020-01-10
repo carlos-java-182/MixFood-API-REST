@@ -101,5 +101,9 @@ public class RecipeServiceImpl implements  RecipeService
         return recipeDAO.findAllCardsTableByIdUserAndLikeName(id,status,name,pageable);
     }
 
-
+    @Override
+    @Transactional(readOnly = true)
+    public RecipeEdit findEditById(int id) {
+        return recipeDAO.findEditById(id);
+    }
 }

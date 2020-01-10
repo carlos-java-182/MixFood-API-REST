@@ -22,6 +22,9 @@ public class RecipeIngredient implements Serializable
     @NotEmpty
     private String quantity;
 
+    private String unit;
+
+
 
 
     //*Relationships
@@ -68,6 +71,13 @@ public class RecipeIngredient implements Serializable
          this.quantity = quantity;
     }      */
 
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
 
     public int getId() {
         return id;

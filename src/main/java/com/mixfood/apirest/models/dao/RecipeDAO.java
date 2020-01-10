@@ -59,4 +59,8 @@ public interface RecipeDAO extends CrudRepository<Recipe,Integer>
     @Query("SELECT r FROM Recipe r WHERE (status = :status AND user_id = :id) AND name LIKE :name%")
     public Page<RecipeCardTable> findAllCardsTableByIdUserAndLikeName(int id,String status, String name, Pageable pageable);
 
+    //*Find Recipe for edit
+    @Query("SELECT r FROM Recipe r WHERE id = :id")
+    public RecipeEdit findEditById(int id);
+
 }

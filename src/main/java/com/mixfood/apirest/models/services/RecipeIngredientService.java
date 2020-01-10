@@ -10,4 +10,5 @@ public interface RecipeIngredientService
     public RecipeIngredient findById(int id);
     public RecipeIngredient save(RecipeIngredient recipeIngredient);
     public void delete(int id);
+
 }

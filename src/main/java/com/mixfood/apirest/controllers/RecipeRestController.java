@@ -489,6 +489,39 @@ public class RecipeRestController
     }
 
     //*Url route
+    @GetMapping("/recipes/edit/{id}")
+    public ResponseEntity<?> showEdit(@PathVariable int id)
+    {
+        //*Objects declaration
+        RecipeEdit recipe = null;
+        Map<String,Object> response = new HashMap<>();
+
+        try
+        {
+            //*Find user and save in object user
+            recipe = recipeService.findEditById(id);
+        }
+        catch(DataAccessException e)
+        {
+            //*Response database error
+            response.put("message","Error consulting database");
+            response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        //*Id not found
+        if(recipe == null)
+        {
+            response.put("message","ID: ".concat(String.valueOf(id).concat(" not found!")));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<RecipeEdit>(recipe,HttpStatus.OK);
+    }
+
+
+
+
+    //*Url route
     @GetMapping("/recipes/{id}/profile")
     public ResponseEntity<?> showProfile(@PathVariable int id)
     {
