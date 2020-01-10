@@ -1,5 +1,6 @@
 package com.mixfood.apirest.projections;
 
+import com.mixfood.apirest.entity.Image;
 import com.mixfood.apirest.entity.RecipeIngredient;
 
 import java.util.List;
@@ -17,4 +18,5 @@ public interface RecipeEdit
     CategoryId getCategory();
     List<TagId> getTags();
     List<RecipeIngredient> getRecipeIngredients();
+    List<RecipeProfile.Image> getImages();
 }
