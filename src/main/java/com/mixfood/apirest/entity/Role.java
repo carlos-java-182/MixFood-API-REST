@@ -12,9 +12,9 @@ public class Role {
     @Column(name = "idRole")
     private int id;
 
-    @Enumerated(EnumType.STRING)
+    //@Enumerated(EnumType.STRING)
     @Column(unique = true, length = 20)
-    private Type type;
+    private String type;
 
     @Temporal(TemporalType.DATE)
     private Date createAt;
@@ -24,10 +24,6 @@ public class Role {
     @ManyToMany(mappedBy = "roles")
     private List<User> users;
 
-    public enum Type{
-        USER,
-        ADMIN
-    }
 
 
     public int getId() {
@@ -38,11 +34,11 @@ public class Role {
         this.id = id;
     }
 
-    public Type getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(Type type) {
+    public void setType(String type) {
         this.type = type;
     }
 }

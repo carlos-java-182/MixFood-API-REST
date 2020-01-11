@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -44,7 +45,162 @@ public class RecipeRestController
     @Autowired
     CategoryService categoryService;
 
-    //*Url route
+    /**
+     **ROLE_USER routes access
+     *
+     */
+    //Create like
+    @Secured("ROLE_USER")
+    @PostMapping("recipes/like")
+    public ResponseEntity<?> createLike(@RequestParam("idRecipe") int idRecipe, @RequestParam("idUser") int idUser)
+    {
+        //*Objects declaration
+        User user = null;
+        Recipe recipe = null;
+        Map<String,Object> response = new HashMap<>();
+
+        user = userService.findById(idUser);
+        recipe = recipeService.findById(idRecipe);
+
+        //*Ids not found
+        if(recipe == null || user == null)
+        {
+            response.put("message","ID recipe: ".concat(String.valueOf(idRecipe).concat(" not found!")));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+        }
+
+        try
+        {
+            recipe.getUsersLike().add(user);
+            recipeService.save(recipe);
+        }
+        catch(DataAccessException e)
+        {
+            //*Response database error
+            response.put("message","Error inserting into database");
+            response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        response.put("message","The like has been created.");
+        return new ResponseEntity<Map<String,Object>>(response,HttpStatus.OK);
+    }
+
+    /**
+     **Create recipe
+     * @param recipe
+     * @param result
+     * @return
+     */
+    @Secured("ROLE_USER")
+    @PostMapping("/recipes")
+    public ResponseEntity<?> create(@Valid @RequestBody Recipe recipe, BindingResult result)
+    {
+        //*Objects declaration
+        Recipe newRecipe = null;
+        User user = null;
+        Map<String,Object> response = new HashMap<>();
+
+        //*Validate errors
+        if(result.hasErrors())
+        {
+            //*List declaration
+            List<String> errors = new ArrayList<>();
+            //*Get errors and add to list
+            for(FieldError err : result.getFieldErrors())
+            {
+                errors.add("Field '"+err.getField()+"' "+err.getDefaultMessage());
+            }
+
+            //*Add errors list to response map
+            response.put("errors", errors);
+            //*Return response
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
+        }
+
+        try
+        {
+            //*Save recipe in database and add recipe in the object
+            newRecipe = recipeService.save(recipe);
+        }
+        catch(DataAccessException e)
+        {
+            //*Response database error
+            response.put("message","Error inserting into database");
+            response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        //*Created user response
+        response.put("message", "The recipe has been created");
+        response.put("id",newRecipe.getId());
+        response.put("recipeName",newRecipe.getName());
+        return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
+    }
+
+    @Secured("ROLE_USER")
+    @PutMapping("/recipes")
+    public ResponseEntity<?> update(@Valid @RequestBody Recipe recipe, BindingResult result)
+    {
+        //*Variables declaration
+        int id = recipe.getId();
+        //*Objects declaration
+        Recipe actualRecipe = null;
+        Map<String,Object> response = new HashMap<>();
+
+        //*Validate errors
+        if(result.hasErrors())
+        {
+            //*List declaration
+            List<String> errors = new ArrayList<>();
+            //*Get errors and add to list
+            for(FieldError err : result.getFieldErrors())
+            {
+                errors.add("Field '"+err.getField()+"' "+err.getDefaultMessage());
+            }
+
+            //*Add errors list to response map
+            response.put("errors", errors);
+            //*Return response
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
+        }
+
+        actualRecipe = recipeService.findById(id);
+
+        if(actualRecipe == null)
+        {
+            response.put("message","ID: ".concat(String.valueOf(id).concat(" not found!")));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+        }
+
+        try
+        {
+            actualRecipe.setDescription(recipe.getDescription());
+            actualRecipe.setStatus(recipe.getStatus());
+            actualRecipe.setCategory(recipe.getCategory());
+            actualRecipe.setDifficulty(recipe.getDifficulty());
+            actualRecipe.setName(recipe.getName());
+            actualRecipe.setPreparationSteps(recipe.getPreparationSteps());
+            actualRecipe.setVideoFramee(recipe.getVideoFrame());
+            actualRecipe.setUpdateAt(new Date());
+            actualRecipe.setTags(recipe.getTags());
+            actualRecipe.setPreparationTime(recipe.getPreparationTime());
+            actualRecipe.setThumbRoute(recipe.getThumbRoute());
+
+            //*Save recipe in database and add recipe in the object
+            recipeService.save(actualRecipe);
+        }
+        catch(DataAccessException e)
+        {
+            //*Response database error
+            response.put("message","Error inserting into database");
+            response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        //*Created user response
+        response.put("message", "The recipe has been created");
+        return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
+    }
 
     @GetMapping("/recipes")
     /**
@@ -175,40 +331,6 @@ public class RecipeRestController
         return  recipeService.findAllForCards(pageable);
     }
 
-    //Create like
-    @PostMapping("recipes/like")
-    public ResponseEntity<?> createLike(@RequestParam("idRecipe") int idRecipe, @RequestParam("idUser") int idUser)
-    {
-        //*Objects declaration
-        User user = null;
-        Recipe recipe = null;
-        Map<String,Object> response = new HashMap<>();
-
-        user = userService.findById(idUser);
-        recipe = recipeService.findById(idRecipe);
-
-        //*Ids not found
-        if(recipe == null || user == null)
-        {
-            response.put("message","ID recipe: ".concat(String.valueOf(idRecipe).concat(" not found!")));
-            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
-        }
-
-        try
-        {
-            recipe.getUsersLike().add(user);
-            recipeService.save(recipe);
-        }
-        catch(DataAccessException e)
-        {
-            //*Response database error
-            response.put("message","Error inserting into database");
-            response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
-            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        response.put("message","The like has been created.");
-        return new ResponseEntity<Map<String,Object>>(response,HttpStatus.OK);
-    }
 
     /**
      **Delete like
@@ -315,120 +437,6 @@ public class RecipeRestController
         return new ResponseEntity<Map<String,Object>>(response,HttpStatus.OK);
     }
 
-    /**
-     **Create recipe
-     * @param recipe
-     * @param result
-     * @return
-     */
-    @PostMapping("/recipes")
-    public ResponseEntity<?> create(@Valid @RequestBody Recipe recipe, BindingResult result)
-    {
-        //*Objects declaration
-        Recipe newRecipe = null;
-        User user = null;
-        Map<String,Object> response = new HashMap<>();
-
-        //*Validate errors
-        if(result.hasErrors())
-        {
-            //*List declaration
-            List<String> errors = new ArrayList<>();
-            //*Get errors and add to list
-            for(FieldError err : result.getFieldErrors())
-            {
-                errors.add("Field '"+err.getField()+"' "+err.getDefaultMessage());
-            }
-
-            //*Add errors list to response map
-            response.put("errors", errors);
-            //*Return response
-            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
-        }
-
-        try
-        {
-            //*Save recipe in database and add recipe in the object
-            newRecipe = recipeService.save(recipe);
-        }
-        catch(DataAccessException e)
-        {
-            //*Response database error
-            response.put("message","Error inserting into database");
-            response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
-            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-        //*Created user response
-        response.put("message", "The recipe has been created");
-        response.put("id",newRecipe.getId());
-        response.put("recipeName",newRecipe.getName());
-        return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
-    }
-
-    @PutMapping("/recipes")
-    public ResponseEntity<?> update(@Valid @RequestBody Recipe recipe, BindingResult result)
-    {
-        //*Variables declaration
-        int id = recipe.getId();
-        //*Objects declaration
-        Recipe actualRecipe = null;
-        Map<String,Object> response = new HashMap<>();
-
-        //*Validate errors
-        if(result.hasErrors())
-        {
-            //*List declaration
-            List<String> errors = new ArrayList<>();
-            //*Get errors and add to list
-            for(FieldError err : result.getFieldErrors())
-            {
-                errors.add("Field '"+err.getField()+"' "+err.getDefaultMessage());
-            }
-
-            //*Add errors list to response map
-            response.put("errors", errors);
-            //*Return response
-            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
-        }
-
-        actualRecipe = recipeService.findById(id);
-
-        if(actualRecipe == null)
-        {
-            response.put("message","ID: ".concat(String.valueOf(id).concat(" not found!")));
-            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
-        }
-
-        try
-        {
-              actualRecipe.setDescription(recipe.getDescription());
-                actualRecipe.setStatus(recipe.getStatus());
-                actualRecipe.setCategory(recipe.getCategory());
-                actualRecipe.setDifficulty(recipe.getDifficulty());
-                actualRecipe.setName(recipe.getName());
-                actualRecipe.setPreparationSteps(recipe.getPreparationSteps());
-                actualRecipe.setVideoFramee(recipe.getVideoFrame());
-                actualRecipe.setUpdateAt(new Date());
-                actualRecipe.setTags(recipe.getTags());
-                actualRecipe.setPreparationTime(recipe.getPreparationTime());
-                actualRecipe.setThumbRoute(recipe.getThumbRoute());
-
-            //*Save recipe in database and add recipe in the object
-              recipeService.save(actualRecipe);
-        }
-        catch(DataAccessException e)
-        {
-            //*Response database error
-            response.put("message","Error inserting into database");
-            response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
-            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-        //*Created user response
-        response.put("message", "The recipe has been created");
-        return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
-    }
 
     /**
      **This function save a new RecipeIngredient
@@ -657,9 +665,6 @@ public class RecipeRestController
         return new ResponseEntity<RecipeEdit>(recipe,HttpStatus.OK);
     }
 
-
-
-
     //*Url route
     @GetMapping("/recipes/{id}/profile")
     public ResponseEntity<?> showProfile(@PathVariable int id)
@@ -697,7 +702,6 @@ public class RecipeRestController
         Pageable pageable = PageRequest.of(page,12);
         return tagService.findCardsById(id,pageable);
     }
-
 
     /**Recipes user routes**/
 

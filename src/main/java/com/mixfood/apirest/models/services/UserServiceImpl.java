@@ -82,6 +82,11 @@ public class UserServiceImpl implements UserService, UserDetailsService
 		return userDao.findEmailById(id);
 	}
 
+	@Override
+	@Transactional(readOnly = true)
+	public User findByEmail(String email) {
+		return userDao.findByEmail(email);
+	}
 
 
 	@Override
@@ -89,6 +94,7 @@ public class UserServiceImpl implements UserService, UserDetailsService
 	public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException
 	{
 		User user = userDao.findByEmail(s);
+		System.out.println("EMAIL: "+ user.getEmail());
 		if(user == null)
 		{
 			logger.error("ERROR IN LOGIN");
@@ -96,7 +102,7 @@ public class UserServiceImpl implements UserService, UserDetailsService
 		}
 		List<GrantedAuthority> authorities = user.getRoles()
 				.stream()
-				.map(role -> new SimpleGrantedAuthority(role.getType().toString()))
+				.map(role -> new SimpleGrantedAuthority(role.getType()))
 				.peek(authority -> logger.info("ROLE: " + authority.getAuthority()))
 				.collect(Collectors.toList());
 		return new org.springframework.security.core.userdetails.User(user.getEmail(),user.getPassword(),true,true,true,true,authorities);

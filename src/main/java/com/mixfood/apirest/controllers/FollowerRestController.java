@@ -28,7 +28,7 @@ import java.util.Map;
 //*
 @RestController
 //*Path mapping
-@RequestMapping("/api/")
+@RequestMapping("/api")
 public class FollowerRestController
 {
     @Autowired
@@ -38,20 +38,20 @@ public class FollowerRestController
     private UserService userService;
 
     //*Url route
-    @GetMapping("followers/{id}/page/{page}/items/{items}")
+    @GetMapping("/followers/{id}/page/{page}/items/{items}")
     public Page<FollowerCard> showFolloers(@PathVariable int id, @PathVariable int page, @PathVariable int items)
     {
         Pageable pageable = PageRequest.of(page,items);
         return followerService.findFollowersByIdUser(id,pageable);
     }
 
-    @GetMapping("followers/validate/user/{idUser}/follower/{idFollower}")
+    @GetMapping("/followers/validate/user/{idUser}/follower/{idFollower}")
     public FollowerId showValidate(@PathVariable int idUser, @PathVariable int idFollower)
     {
         return  followerService.findByIdUserAndIdFollower(idUser,idFollower);
     }
 
-    @PostMapping("followers")
+    @PostMapping("/followers")
     public ResponseEntity<?> create(@Valid @RequestBody Follower follower, BindingResult result)
     {
         //*Objects declaration
@@ -99,7 +99,7 @@ public class FollowerRestController
         return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
     }
 
-    @DeleteMapping("followers/{id}")
+    @DeleteMapping("/followers/{id}")
     public ResponseEntity<?> delete(@PathVariable int id)
     {
         //*Object declaration
