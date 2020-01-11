@@ -2,6 +2,7 @@ package com.mixfood.apirest.entity;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "roles")
@@ -10,7 +11,9 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idRole")
     private int id;
+
     @Enumerated(EnumType.STRING)
+    @Column(unique = true, length = 20)
     private Type type;
 
     @Temporal(TemporalType.DATE)
@@ -18,10 +21,14 @@ public class Role {
     @Temporal(TemporalType.DATE)
     private Date updateAt;
 
+    @ManyToMany(mappedBy = "roles")
+    private List<User> users;
+
     public enum Type{
         USER,
         ADMIN
     }
+
 
     public int getId() {
         return id;

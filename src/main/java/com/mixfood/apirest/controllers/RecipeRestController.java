@@ -11,7 +11,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableArgumentResolver;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,12 +18,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.security.PermitAll;
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 //*Set cross origin for angular server
 @CrossOrigin(origins = {"http://localhost:4200"})
@@ -329,7 +324,6 @@ public class RecipeRestController
     @PostMapping("/recipes")
     public ResponseEntity<?> create(@Valid @RequestBody Recipe recipe, BindingResult result)
     {
-
         //*Objects declaration
         Recipe newRecipe = null;
         User user = null;
@@ -372,10 +366,76 @@ public class RecipeRestController
         return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
     }
 
+    @PutMapping("/recipes")
+    public ResponseEntity<?> update(@Valid @RequestBody Recipe recipe, BindingResult result)
+    {
+        //*Variables declaration
+        int id = recipe.getId();
+        //*Objects declaration
+        Recipe actualRecipe = null;
+        Map<String,Object> response = new HashMap<>();
 
+        //*Validate errors
+        if(result.hasErrors())
+        {
+            //*List declaration
+            List<String> errors = new ArrayList<>();
+            //*Get errors and add to list
+            for(FieldError err : result.getFieldErrors())
+            {
+                errors.add("Field '"+err.getField()+"' "+err.getDefaultMessage());
+            }
 
+            //*Add errors list to response map
+            response.put("errors", errors);
+            //*Return response
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
+        }
 
+        actualRecipe = recipeService.findById(id);
 
+        if(actualRecipe == null)
+        {
+            response.put("message","ID: ".concat(String.valueOf(id).concat(" not found!")));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+        }
+
+        try
+        {
+              actualRecipe.setDescription(recipe.getDescription());
+                actualRecipe.setStatus(recipe.getStatus());
+                actualRecipe.setCategory(recipe.getCategory());
+                actualRecipe.setDifficulty(recipe.getDifficulty());
+                actualRecipe.setName(recipe.getName());
+                actualRecipe.setPreparationSteps(recipe.getPreparationSteps());
+                actualRecipe.setVideoFramee(recipe.getVideoFrame());
+                actualRecipe.setUpdateAt(new Date());
+                actualRecipe.setTags(recipe.getTags());
+                actualRecipe.setPreparationTime(recipe.getPreparationTime());
+                actualRecipe.setThumbRoute(recipe.getThumbRoute());
+
+            //*Save recipe in database and add recipe in the object
+              recipeService.save(actualRecipe);
+        }
+        catch(DataAccessException e)
+        {
+            //*Response database error
+            response.put("message","Error inserting into database");
+            response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        //*Created user response
+        response.put("message", "The recipe has been created");
+        return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
+    }
+
+    /**
+     **This function save a new RecipeIngredient
+     * @param recipeIngredients: json with recipeingredient data
+     * @param result
+     * @return: this return a message with response status
+     */
     @PostMapping("recipes/ingredients")
     public ResponseEntity<?> createIngredients(@Valid @RequestBody List<RecipeIngredient> recipeIngredients, BindingResult result)
     {
@@ -418,6 +478,85 @@ public class RecipeRestController
         //*Created user response
         response.put("message", "The recipe ingredient has been created");
         return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
+    }
+
+    /**
+     *
+     * @param recipeIngredients
+     * @param result
+     * @return
+     */
+    @PutMapping("recipes/ingredients")
+    public ResponseEntity<?> updateIngredients(@Valid @RequestBody List<RecipeIngredient> recipeIngredients, BindingResult result)
+    {
+        //*Objects declaration
+        RecipeIngredient actualRecipeIngredient = null;
+        Map<String,Object> response = new HashMap<>();
+        //*Validate errors
+        if(result.hasErrors())
+        {
+            //*List declaration
+            List<String> errors = new ArrayList<>();
+            //*Get errors and add to list
+            for(FieldError err : result.getFieldErrors())
+            {
+                errors.add("Field '"+err.getField()+"' "+err.getDefaultMessage());
+            }
+
+            //*Add errors list to response map
+            response.put("errors", errors);
+            //*Return response
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
+        }
+        try
+        {
+            //*Save recipe in database and add recipe in the object
+            for(RecipeIngredient recipeIngredient: recipeIngredients)
+            {
+                actualRecipeIngredient = recipeIngredientService.findById(recipeIngredient.getId());
+                actualRecipeIngredient.setQuantity(recipeIngredient.getQuantity());
+                actualRecipeIngredient.setUnit(recipeIngredient.getUnit());
+                actualRecipeIngredient.setIngredient(recipeIngredient.getIngredient());
+                recipeIngredientService.save(actualRecipeIngredient);
+            }
+        }
+        catch(DataAccessException e)
+        {
+            //*Response database error
+            response.put("message","Error inserting into database");
+            response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        //*Created user response
+        //response.put("message", "The recipe ingredient has been updated");
+        response.put("ingredients",recipeIngredients);
+        return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("recipes/ingredients/{id}")
+    public ResponseEntity<?> deleteIngredients(@PathVariable int id)
+    {
+        //*Objects declaration
+        RecipeIngredient recipeIngredient;
+        Map<String,Object> response = new HashMap<>();
+
+        try
+        {
+            //*Delete recipe in database
+            recipeIngredientService.delete(id);
+        }
+        catch(DataAccessException e)
+        {
+            //*Response database error
+            response.put("message","Error removing into database");
+            response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        //*Created response
+        response.put("message", "The recipe ingredient has been removed");
+        return new ResponseEntity<Map<String,Object>>(response,HttpStatus.OK);
     }
 
     //*Url route

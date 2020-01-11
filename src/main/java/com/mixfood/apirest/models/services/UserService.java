@@ -27,6 +27,8 @@ public interface UserService
 
     public UserEmail findEmailById(int id);
 
+   // public User findByEmail(String email);
+
 
 
 }

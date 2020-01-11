@@ -36,7 +36,11 @@ public class IngredientRestController
         return ingredientService.findAll();
     }
 
-    //*Url route
+    /**
+     **Esta funcion obtiene un ingrediente por su id
+     * @param id
+     * @return
+     */
     @GetMapping("/ingredients/{id}")
     public ResponseEntity<?> show(@PathVariable int id)
     {

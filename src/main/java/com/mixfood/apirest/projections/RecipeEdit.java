@@ -18,5 +18,12 @@ public interface RecipeEdit
     CategoryId getCategory();
     List<TagId> getTags();
     List<RecipeIngredient> getRecipeIngredients();
-    List<RecipeProfile.Image> getImages();
+    List<Image> getImages();
+
+    interface Image
+    {
+        int getId();
+        String getRouteImage();
+      //  boolean getPrincipal();
+    }
 }

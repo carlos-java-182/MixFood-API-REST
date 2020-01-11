@@ -10,7 +10,7 @@ import com.mixfood.apirest.entity.User;
 public interface UserDAO extends CrudRepository<User,Integer> 
 {
     //*
-    //@Query("SELECT u FROM users u WHERE u.email = ?1")
+    @Query("SELECT u FROM User u WHERE u.email =:email")
     public User findByEmail(String email);
 
     @Query("SELECT u FROM User u WHERE id = :id")
@@ -18,6 +18,8 @@ public interface UserDAO extends CrudRepository<User,Integer>
 
     @Query("SELECT u FROM User u WHERE id = :id")
     public UserEmail findEmailById(int id);
+
+
 
 
 

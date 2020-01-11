@@ -21,9 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.core.io.Resource;
 import javax.validation.Valid;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
-import java.net.FileNameMap;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -273,6 +271,55 @@ public class ImageRestController
         response.put("imageRoute",fileName);
 
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("images/recipes/{id}")
+    public ResponseEntity<?> deleteImageRecipe(@PathVariable int id)
+    {
+        //*Variables delcaration
+        String oldImage = "";
+
+        //*Objects declaration
+        Image image = null;
+        Map<String,Object> response = new HashMap<>();
+
+        image = imageService.findById(id);
+
+        if(image == null)
+        {
+            response.put("message","ID: ".concat(String.valueOf(id).concat(" not found!")));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+        }
+
+        try
+        {
+            //*Delete recipe in database
+            imageService.delete(id);
+
+            //*Remove image in server
+            //*Get image route
+            oldImage = image.getRouteImage();
+            //*Get absolute path image
+            Path oldFileRoute = Paths.get("uploads/recipes").resolve(oldImage).toAbsolutePath();
+            //*Convert path to file
+            File oldFile = oldFileRoute.toFile();
+
+            if(oldFile.exists() && oldFile.canRead())
+            {
+                oldFile.delete();
+            }
+        }
+        catch(DataAccessException e)
+        {
+            //*Response database error
+            response.put("message","Error removing into database");
+            response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        //*Created response
+        response.put("message", "The image has been removed");
+        return new ResponseEntity<Map<String,Object>>(response,HttpStatus.OK);
     }
 
     public enum typeImage

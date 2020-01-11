@@ -26,7 +26,7 @@ public class RecipeServiceImpl implements  RecipeService
     }
 
     @Override
-    @Transactional(readOnly = true)
+  //  @Transactional(readOnly = true)
     public Recipe findById(int id) {
         return recipeDAO.findById(id).orElse(null);
     }

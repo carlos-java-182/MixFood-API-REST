@@ -98,10 +98,7 @@ public class User implements Serializable
 	@JoinColumn(name = "follower_id")
 	private List<Follower> followers = new ArrayList<>();
 
-	//*Relationship many to one to categories
-	/*@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "role_id",nullable = false)
-	private Role role;*/
+
 
 	@OneToMany(mappedBy = "user")
 	private List<Ranking> rankings = new ArrayList<>();
@@ -113,6 +110,13 @@ public class User implements Serializable
 	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 	@ManyToMany(mappedBy = "usersLike")
 	private List<Recipe> recipesLike = new ArrayList<>();
+
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinTable(name = "users_authorities",
+				joinColumns = @JoinColumn(name = "user_id"),
+				inverseJoinColumns = @JoinColumn(name = "role_id"),
+				uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id","role_id"})})
+	private List<Role> roles;
 
 	public enum Gender
 	{
@@ -240,6 +244,14 @@ public class User implements Serializable
 
 	public void setDateBirth(Date dateBirth) {
 		this.dateBirth = dateBirth;
+	}
+
+	public List<Role> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(List<Role> roles) {
+		this.roles = roles;
 	}
 
 	/*
