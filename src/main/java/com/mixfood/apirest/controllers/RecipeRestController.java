@@ -261,10 +261,6 @@ public class RecipeRestController
         }
 
         return new ResponseEntity<List<RecipeLatestUser>>(recipes,HttpStatus.OK);
-
-
-       // Pageable pageable = PageRequest.of(0,size);
-        //return recipeService.findLatestsByIdUser(id,pageable);
     }
 
     /**

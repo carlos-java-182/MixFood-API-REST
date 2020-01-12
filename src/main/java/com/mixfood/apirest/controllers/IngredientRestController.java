@@ -4,6 +4,9 @@ import com.mixfood.apirest.entity.Ingredient;
 import com.mixfood.apirest.models.services.IngredientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -12,10 +15,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 //*Set cross origin for angular server
 @CrossOrigin(origins = {"http://localhost:4200"})
@@ -79,6 +79,7 @@ public class IngredientRestController
     {
         //*Objects declaration
         Ingredient newIngredient = null;
+        Ingredient actualIngredient = null;
         Map<String,Object> response = new HashMap<>();
 
         //*Validate errors
@@ -96,6 +97,14 @@ public class IngredientRestController
             response.put("errors", errors);
             //*Return response
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
+        }
+
+        actualIngredient = ingredientService.findByName(ingredient.getName());
+
+        if(actualIngredient != null)
+        {
+            response.put("message","This ingredient already exists.");
+            return new ResponseEntity<Map<String,Object>>(response,HttpStatus.NOT_FOUND);
         }
 
         try
@@ -117,12 +126,61 @@ public class IngredientRestController
         return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
     }
 
+
+    @GetMapping("ingredients/page/{page}/items/{items}")
+    public ResponseEntity<?> showPages(@PathVariable int page, @PathVariable int items)
+    {
+        //*Objects declaration
+        Page<Ingredient> ingredients;
+        Map<String,Object> response = new HashMap<>();
+
+        try
+        {
+            Pageable pageable = PageRequest.of(page,items);
+            //*Find ingredients and save in object recipes
+            ingredients = ingredientService.findAllPaginate(pageable);
+        }
+        catch(DataAccessException e)
+        {
+            //*Response database error
+            response.put("message","Error consulting database");
+            response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity<Page<Ingredient>>(ingredients,HttpStatus.OK);
+    }
+
+    @GetMapping("ingredients/page/{page}/items/{items}/term/{term}")
+    public ResponseEntity<?> showPagesByTerm(@PathVariable int page, @PathVariable int items, @PathVariable String term)
+    {
+        //*Objects declaration
+        Page<Ingredient> ingredients;
+        Map<String,Object> response = new HashMap<>();
+
+        try
+        {
+            Pageable pageable = PageRequest.of(page,items);
+            //*Find ingredients and save in object recipes
+            ingredients = ingredientService.findPaginateByLikeName(term, pageable);
+        }
+        catch(DataAccessException e)
+        {
+            //*Response database error
+            response.put("message","Error consulting database");
+            response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<Page<Ingredient>>(ingredients,HttpStatus.OK);
+    }
+
     //*Url route
     @PutMapping("/ingredients/{id}")
     public ResponseEntity<?> update(@Valid @RequestBody Ingredient ingredient, BindingResult result, @PathVariable int id)
     {
         //*Find ingredient
         Ingredient actualIngredient = ingredientService.findById(id);
+        Ingredient ingredientExists = null;
         //*Create objects
         Ingredient updatedIngredient = null;
         Map<String,Object> response = new HashMap<>();
@@ -153,16 +211,18 @@ public class IngredientRestController
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
         }
 
+        ingredientExists = ingredientService.findByName(ingredient.getName());
+        if(ingredientExists != null)
+        {
+            response.put("message","This ingredient already exists.");
+            return new ResponseEntity<Map<String,Object>>(response,HttpStatus.NOT_FOUND);
+        }
+
         try
         {
             //*Add new ingredient data to actual ingredien
-            /*actualUser.setName(user.getName());
-            actualUser.setAge(user.getAge());
-            actualUser.setLastname(user.getLastname());
-            actualUser.setStatus(user.getStatus());
-            actualUser.setDescription(user.getDescription());
-            actualUser.setPorfileimageRoute(user.getPorfileimageRoute());
-            actualUser.setSex(user.getSex());*/
+            actualIngredient.setName(ingredient.getName());
+            actualIngredient.setUpdateAt(new Date());
 
             //*Update ingredient
             updatedIngredient = ingredientService.save(actualIngredient);

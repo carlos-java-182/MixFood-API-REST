@@ -29,7 +29,7 @@ public class Ingredient implements Serializable
 	@Size(max = 60)
 	@Column(nullable = false, unique = true)
 	private String name;
-	@NotEmpty
+//	@NotEmpty
 	@Size(max = 80)
 	@Column(nullable = false, unique = true)
 	private String thumbRoute;
