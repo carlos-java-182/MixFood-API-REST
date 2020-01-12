@@ -26,12 +26,14 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter
                 "/api/categories/**",
                 "/api/tags/**",
                 "/api/rankings/**",
+                "/api/uploads/**",
                 "/api/recipes/**",
                 "/api/followers/**",
                 "/api/users/**").permitAll()
+                .antMatchers(HttpMethod.POST,"/api/users/register").permitAll().anyRequest().authenticated();
 //                .antMatchers(HttpMethod.GET,"/api/users/{id}").hasRole("ADMIN")
 //                .antMatchers(HttpMethod.POST,"/api/recipes/").hasRole("USER")
-        .anyRequest().authenticated();
+
     }
 
 

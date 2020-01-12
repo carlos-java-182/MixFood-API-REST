@@ -37,6 +37,11 @@ public class AuthorizationServerconfig extends AuthorizationServerConfigurerAdap
         .checkTokenAccess("isAuthenticated()");
     }
 
+    /**
+     **This function create the comunication with the web client for access to api
+     * @param clients: client web (angular)
+     * @throws Exception
+     */
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception
     {

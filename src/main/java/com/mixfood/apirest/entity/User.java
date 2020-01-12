@@ -45,20 +45,18 @@ public class User implements Serializable
 	@Column(length = 60)
 	private String password;
 	@NotEmpty
-	@Size(max = 2)
-	@Column(nullable = false)
-	private String age;
+
 	//@NotEmpty
 	@Column(length = 6)
-	@Enumerated(EnumType.STRING)
-	private Gender gender;
+	//@Enumerated(EnumType.STRING)
+	private String gender;
   //  @Enumerated(EnumType.STRING)
 	private String status;
-	@NotEmpty
+	//@NotEmpty
 	@Size(max = 80)
 	@Column(name = "porfileimage_route")
 	private String porfileimageRoute;
-	@NotEmpty
+	//@NotEmpty
 	//text
 	private String description;
 	//@NotEmpty
@@ -67,6 +65,10 @@ public class User implements Serializable
 	private Date dateBirth;
 	@NotEmpty
 	private String country;
+
+	@Column(columnDefinition = "BOOLEAN default false")
+	private Boolean enabled;
+
 	//@NotEmpty
 	@Size(max = 200)
 	private String token;
@@ -79,6 +81,7 @@ public class User implements Serializable
 	}
     @Temporal(TemporalType.DATE)
 	private Date updateAt;
+
 
     
    //@OneToMany(targetEntity = Recipe.class, cascade = CascadeType.ALL, mappedBy = "user")
@@ -166,19 +169,12 @@ public class User implements Serializable
 		this.password = password;
 	}
 
-	public String getAge() {
-		return age;
-	}
 
-	public void setAge(String age) {
-		this.age = age;
-	}
-
-	public Gender getGender() {
+	public String getGender() {
 		return gender;
 	}
 
-	public void setGender(Gender gender) {
+	public void setGender(String gender) {
 		this.gender = gender;
 	}
 
@@ -295,6 +291,14 @@ public void setRecipes(List<Recipe> recipes) {
 
 	public void setRankings(List<Ranking> rankings) {
 		this.rankings = rankings;
+	}
+
+	public Boolean getEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(Boolean enabled) {
+		this.enabled = enabled;
 	}
 
 	public List<SocialNetwork> getSocialNetworks() {

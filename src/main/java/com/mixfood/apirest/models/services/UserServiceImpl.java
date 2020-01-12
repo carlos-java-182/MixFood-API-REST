@@ -105,6 +105,6 @@ public class UserServiceImpl implements UserService, UserDetailsService
 				.map(role -> new SimpleGrantedAuthority(role.getType()))
 				.peek(authority -> logger.info("ROLE: " + authority.getAuthority()))
 				.collect(Collectors.toList());
-		return new org.springframework.security.core.userdetails.User(user.getEmail(),user.getPassword(),true,true,true,true,authorities);
+		return new org.springframework.security.core.userdetails.User(user.getEmail(),user.getPassword(),user.getEnabled(),true,true,true,authorities);
 	}
 }

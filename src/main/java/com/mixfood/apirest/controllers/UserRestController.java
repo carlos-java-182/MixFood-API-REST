@@ -23,6 +23,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -47,6 +48,8 @@ public class UserRestController
 	@Autowired
 	private SocialNetworkService socialNetworkService;
 
+	@Autowired
+	private BCryptPasswordEncoder passwordEncoder;
 
 	//*Url route
 	@GetMapping("/users")
@@ -307,7 +310,54 @@ public class UserRestController
 		try 
 		{
 			//*Save user in database and add user in the object
+			String passwordBcrypt = passwordEncoder.encode(user.getPassword());
 			newUser = userService.save(user);		
+		}
+		catch(DataAccessException e)
+		{
+			//*Response database error
+			response.put("message","Error inserting into database");
+			response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		//*Created user response
+		response.put("message", "The user has been created");
+		response.put("user", newUser);
+		return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
+	}
+
+	@PostMapping("/users/register")
+	public ResponseEntity<?> register(@Valid @RequestBody User user,BindingResult result)
+	{
+		//*Objects declaration
+		User newUser = null;
+		Map<String,Object> response = new HashMap<>();
+
+		//*Validate errors
+		if(result.hasErrors())
+		{
+			//*List declaration
+			List<String> errors = new ArrayList<>();
+			//*Get errors and add to list
+			for(FieldError err : result.getFieldErrors())
+			{
+				errors.add("Field '"+err.getField()+"' "+err.getDefaultMessage());
+			}
+
+			//*Add errors list to response map
+			response.put("errors", errors);
+			//*Return response
+			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
+		}
+
+		try
+		{
+			//*Save user in database and add user in the object
+			String passwordBcrypt = passwordEncoder.encode(user.getPassword());
+			user.setPorfileimageRoute("defaultprofile.png");
+			user.setPassword(passwordBcrypt);
+			newUser = userService.save(user);
 		}
 		catch(DataAccessException e)
 		{
@@ -435,8 +485,6 @@ public class UserRestController
 		return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
 	}
 
-
-
 	//*Url route
 	@PutMapping("/users/{id}")
 	public ResponseEntity<?> update(@Valid @RequestBody User user, BindingResult result, @PathVariable int id)
@@ -477,7 +525,6 @@ public class UserRestController
 		{
 			//*Add new user data to actual user
 			actualUser.setName(user.getName());
-			actualUser.setAge(user.getAge());
 			actualUser.setLastname(user.getLastname());
 			actualUser.setStatus(user.getStatus());
 			actualUser.setDescription(user.getDescription());
