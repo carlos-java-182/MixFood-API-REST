@@ -14,6 +14,7 @@ public interface RankingService
     public Ranking findById(int id);
     public Ranking save(Ranking ranking);
     public void delete(int id);
-    @Transactional(readOnly = true)
     public Page<RankingComment> findByIdRecipe(int id, Pageable pageable);
+    public Ranking findByIdRecipeAndIdUser(int idRecipe, int idUser);
+
 }

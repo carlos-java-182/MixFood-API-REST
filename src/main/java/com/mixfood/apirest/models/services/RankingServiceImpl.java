@@ -24,6 +24,7 @@ public class RankingServiceImpl implements  RankingService
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Ranking findById(int id) {
         return rankingDAO.findById(id).orElse(null);
     }
@@ -39,7 +40,14 @@ public class RankingServiceImpl implements  RankingService
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<RankingComment> findByIdRecipe(int id, Pageable pageable) {
         return rankingDAO.findByIdRecipe(id, pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Ranking findByIdRecipeAndIdUser(int idRecipe, int idUser) {
+        return rankingDAO.findByIdRecipeAndIdUser(idRecipe,idUser);
     }
 }

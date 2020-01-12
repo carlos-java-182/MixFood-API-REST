@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -44,6 +45,7 @@ public class RankingRestController
     }
 
     //*Url route
+    @Secured("ROLE_USER")
     @PostMapping("/rankings")
     public ResponseEntity<?> create(@Valid @RequestBody Ranking ranking, BindingResult result)
     {
@@ -96,5 +98,37 @@ public class RankingRestController
         Pageable pageable = PageRequest.of(page,items);
         return  rankingService.findByIdRecipe(id,pageable);
     }
+
+    /**
+     **This function validate if the ranking of user logged exist
+     * @param idRecipe: id recipe
+     * @param idUser: id user
+     * @return: Message about validation status
+     */
+    @Secured("ROLE_USER")
+    @GetMapping("rankings/validate/{idRecipe}/user/{idUser}")
+    public ResponseEntity<?> showValidate(@PathVariable int idRecipe, @PathVariable int idUser)
+    {
+        System.out.println("ID: "+idRecipe);
+        //*Objects declaration
+        Ranking ranking = null;
+        Map<String,Object> response = new HashMap<>();
+
+        ranking = rankingService.findByIdRecipeAndIdUser(idRecipe,idUser);
+
+        //*Validate if ranking exists
+        if(ranking != null)
+        {
+            response.put("message","This user has already commented previously");
+            return  new ResponseEntity<Map<String,Object>>(response,HttpStatus.NOT_FOUND);
+        }
+
+        //*Created user response
+        response.put("message", "Comments no exists");
+        response.put("ranking", ranking);
+        return new ResponseEntity<Map<String,Object>>(response,HttpStatus.OK);
+    }
+
+
 
 }

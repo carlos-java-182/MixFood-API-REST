@@ -13,6 +13,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -149,6 +150,7 @@ public class ImageRestController
         }
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
     }
+
     @GetMapping("uploads/recipes/{imageName:.+}")
     public ResponseEntity<Resource> showImage(@PathVariable String imageName)
     {
@@ -214,6 +216,7 @@ public class ImageRestController
         return new ResponseEntity<Resource>(resource,headers,HttpStatus.OK);
     }
 
+    @Secured("ROLE_USER")
     @PostMapping("images/uploads/users")
     public ResponseEntity<?> updateImage(@RequestParam("file") MultipartFile file, @RequestParam("id") int id)
     {
@@ -273,6 +276,7 @@ public class ImageRestController
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
     }
 
+    @Secured("ROLE_USER")
     @DeleteMapping("images/recipes/{id}")
     public ResponseEntity<?> deleteImageRecipe(@PathVariable int id)
     {

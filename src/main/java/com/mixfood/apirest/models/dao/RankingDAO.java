@@ -16,4 +16,8 @@ public interface RankingDAO extends CrudRepository<Ranking, Integer>
     @Query("SELECT r FROM Ranking r WHERE recipe_id =:id")
     public Page<RankingComment> findByIdRecipe(int id, Pageable pageable);
 
+    //*Search ranking by id recipe and id user
+    @Query("SELECT r FROM Ranking r WHERE recipe_id =:idRecipe AND user_id =:idUser")
+    public Ranking findByIdRecipeAndIdUser(int idRecipe, int idUser);
+
 }

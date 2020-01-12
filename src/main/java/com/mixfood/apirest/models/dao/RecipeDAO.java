@@ -63,4 +63,6 @@ public interface RecipeDAO extends CrudRepository<Recipe,Integer>
     @Query("SELECT r FROM Recipe r WHERE id = :id")
     public RecipeEdit findEditById(int id);
 
+   // @Query("SELECT r FROM Recipe r WHERE r.")
+
 }

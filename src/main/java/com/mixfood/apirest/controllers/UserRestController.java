@@ -12,8 +12,10 @@ import javax.jws.soap.SOAPBinding;
 import javax.validation.Valid;
 
 import com.mixfood.apirest.entity.PasswordChange;
+import com.mixfood.apirest.entity.Role;
 import com.mixfood.apirest.entity.SocialNetwork;
 import com.mixfood.apirest.models.dao.SocialNetworkDAO;
+import com.mixfood.apirest.models.services.RoleServiceImpl;
 import com.mixfood.apirest.models.services.SocialNetworkService;
 import com.mixfood.apirest.projections.SocialNetworkList;
 import com.mixfood.apirest.projections.UserEmail;
@@ -23,6 +25,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
@@ -51,43 +54,14 @@ public class UserRestController
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
 
-	//*Url route
-	@GetMapping("/users")
-	public List<User> index()
-	{
-		return userService.findAll();
-	}
+	@Autowired
+	private RoleServiceImpl roleService;
 
-	//*Url route
-	@GetMapping("/users/{id}")
-	public ResponseEntity<?> show(@PathVariable int id)
-	{
-		//*Objects declaration
-		User user = null; 
-		Map<String,Object> response = new HashMap<>();
-		
-		try 
-		{
-			//*Find user and save in object user
-			user = userService.findById(id);
-		}
-		catch(DataAccessException e)
-		{
-			//*Response database error
-			response.put("message","Error consulting database");
-			response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
-			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-
-		//*Id not found
-		if(user == null)
-		{
-			response.put("message","ID: ".concat(String.valueOf(id).concat(" not found!")));
-			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
-		}
-		return new ResponseEntity<User>(user,HttpStatus.OK);
-	}
-
+	/**
+	 **ROLE_USER routes access
+	 *
+	 */
+	@Secured("ROLE_USER")
 	@GetMapping("/users/settings/information/{id}")
 	public ResponseEntity<?> showInformation(@PathVariable int id)
 	{
@@ -117,6 +91,7 @@ public class UserRestController
 		return new ResponseEntity<UserInformation>(userInformation,HttpStatus.OK);
 	}
 
+	@Secured("ROLE_USER")
 	@GetMapping("/users/settings/email/{id}")
 	public ResponseEntity<?> showEmail(@PathVariable int id)
 	{
@@ -147,6 +122,7 @@ public class UserRestController
 		return new ResponseEntity<UserEmail>(userEmail,HttpStatus.OK);
 	}
 
+	@Secured("ROLE_USER")
 	@GetMapping("/users/settings/socialnetworks/{id}")
 	public ResponseEntity<?> showSocialNetworks(@PathVariable int id)
 	{
@@ -176,6 +152,7 @@ public class UserRestController
 		return new ResponseEntity<List<SocialNetworkList>>(socialNetworkList,HttpStatus.OK);
 	}
 
+	@Secured("ROLE_USER")
 	@PutMapping("/users/settings/email/{id}")
 	public ResponseEntity<?> updateEmail(@RequestBody User user, @PathVariable int id)
 	{
@@ -191,6 +168,17 @@ public class UserRestController
 			//*Return response with http status
 			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
 		}
+
+		//**Validate if actual password is equals to old password
+		if(!passwordEncoder.matches(user.getPassword(),actualUser.getPassword()))
+		{
+			//*Add message to map
+			response.put("error","passwordwrong");
+			response.put("message","The actual password is wrong");
+			//*Return response with http status
+			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+		}
+
 		try
 		{
 			actualUser.setEmail(user.getEmail());
@@ -211,6 +199,7 @@ public class UserRestController
 		return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
 	}
 
+	@Secured("ROLE_USER")
 	@PutMapping("/users/settings/socialnetworks/{id}")
 	public ResponseEntity<?> updateSocialNetworks(@RequestBody SocialNetwork socialNetwork, @PathVariable int id)
 	{
@@ -256,6 +245,7 @@ public class UserRestController
 
 	}
 
+	@Secured("ROLE_USER")
 	@DeleteMapping("/users/settings/socialnetworks/{network}/{id}")
 	public ResponseEntity<?> deleteSocialNetworks(@PathVariable SocialNetwork.Network network, @PathVariable int id)
 	{
@@ -282,98 +272,9 @@ public class UserRestController
 		response.put("message", "The socialnetwork has been removed!");
 		return new ResponseEntity<Map<String,Object>>(response,HttpStatus.OK);
 	}
-	//*Url route
-	@PostMapping("/users")
-	public ResponseEntity<?> create(@Valid @RequestBody User user, BindingResult result)
-	{
-		//*Objects declaration
-		User newUser = null; 
-		Map<String,Object> response = new HashMap<>();
-
-		//*Validate errors
-		if(result.hasErrors())
-		{
-			//*List declaration
-			List<String> errors = new ArrayList<>();
-			//*Get errors and add to list
-			for(FieldError err : result.getFieldErrors())
-			{
-				errors.add("Field '"+err.getField()+"' "+err.getDefaultMessage());
-			}
-					
-			//*Add errors list to response map
-			response.put("errors", errors);
-			//*Return response
-			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
-		}
-		
-		try 
-		{
-			//*Save user in database and add user in the object
-			String passwordBcrypt = passwordEncoder.encode(user.getPassword());
-			newUser = userService.save(user);		
-		}
-		catch(DataAccessException e)
-		{
-			//*Response database error
-			response.put("message","Error inserting into database");
-			response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
-			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-
-		//*Created user response
-		response.put("message", "The user has been created");
-		response.put("user", newUser);
-		return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
-	}
-
-	@PostMapping("/users/register")
-	public ResponseEntity<?> register(@Valid @RequestBody User user,BindingResult result)
-	{
-		//*Objects declaration
-		User newUser = null;
-		Map<String,Object> response = new HashMap<>();
-
-		//*Validate errors
-		if(result.hasErrors())
-		{
-			//*List declaration
-			List<String> errors = new ArrayList<>();
-			//*Get errors and add to list
-			for(FieldError err : result.getFieldErrors())
-			{
-				errors.add("Field '"+err.getField()+"' "+err.getDefaultMessage());
-			}
-
-			//*Add errors list to response map
-			response.put("errors", errors);
-			//*Return response
-			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
-		}
-
-		try
-		{
-			//*Save user in database and add user in the object
-			String passwordBcrypt = passwordEncoder.encode(user.getPassword());
-			user.setPorfileimageRoute("defaultprofile.png");
-			user.setPassword(passwordBcrypt);
-			newUser = userService.save(user);
-		}
-		catch(DataAccessException e)
-		{
-			//*Response database error
-			response.put("message","Error inserting into database");
-			response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
-			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-
-		//*Created user response
-		response.put("message", "The user has been created");
-		response.put("user", newUser);
-		return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
-	}
 
 	/**Update user information**/
+	@Secured(("ROLE_USER"))
 	@PutMapping("/users/settings/information/{id}")
 	public ResponseEntity<?> updateInformation(@RequestBody User userInformation, @PathVariable int id)
 	{
@@ -430,18 +331,19 @@ public class UserRestController
 
 	}
 
+	@Secured(("ROLE_USER"))
 	@PutMapping("/users/settings/password/{id}")
 	public ResponseEntity<?> updatePassword(@RequestBody PasswordChange passwordChange, @PathVariable int id)
 	{
 		//*Create objects
 		User actualUser = null;
-		User updatedUser = null;
 		Map<String,Object> response = new HashMap<>();
+		String passwordBcrypt = "";
+		String actualPassword = "";
 
 		//*Find user by id
 		actualUser = userService.findById(id);
 
-		System.out.println("NAME: "+actualUser.getName());
 
 		//*Validate if user does exist
 		if(actualUser == null)
@@ -452,23 +354,23 @@ public class UserRestController
 			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
 		}
 
-		System.out.println("PASSWORD: "+actualUser.getPassword().toString());
-		System.out.println("PASSWORD: "+passwordChange.getActualPassword());
-		System.out.println(actualUser.getPassword().equals("password"));
-		//if(actualUser.getPassword() != "password")
-		//{
+		//**Validate if actual password is equals to old password
+		if(!passwordEncoder.matches(passwordChange.getActualPassword(),actualUser.getPassword()))
+		{
 			//*Add message to map
 			response.put("error","passwordwrong");
 			response.put("message","The actual password is wrong");
 			//*Return response with http status
-		//	return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
-		//}
+			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+		}
 		try
 		{
+			//*Encrypt new password
+			passwordBcrypt = passwordEncoder.encode(passwordChange.getNewPassword());
 			//*Add new user data to actual user
-			actualUser.setPassword(passwordChange.getNewPassword());
+			actualUser.setPassword(passwordBcrypt);
 			//*Update user
-			updatedUser = userService.save(actualUser);
+			userService.save(actualUser);
 		}
 		catch(DataAccessException e)
 		{
@@ -484,6 +386,146 @@ public class UserRestController
 		//*Return response
 		return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
 	}
+
+
+	//*Url route
+	@GetMapping("/users")
+	public List<User> index()
+	{
+		return userService.findAll();
+	}
+
+	//*Url route
+	@GetMapping("/users/{id}")
+	public ResponseEntity<?> show(@PathVariable int id)
+	{
+		//*Objects declaration
+		User user = null; 
+		Map<String,Object> response = new HashMap<>();
+		
+		try 
+		{
+			//*Find user and save in object user
+			user = userService.findById(id);
+		}
+		catch(DataAccessException e)
+		{
+			//*Response database error
+			response.put("message","Error consulting database");
+			response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		//*Id not found
+		if(user == null)
+		{
+			response.put("message","ID: ".concat(String.valueOf(id).concat(" not found!")));
+			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<User>(user,HttpStatus.OK);
+	}
+
+
+	//*Url route
+	@PostMapping("/users")
+	public ResponseEntity<?> create(@Valid @RequestBody User user, BindingResult result)
+	{
+		//*Objects declaration
+		User newUser = null; 
+		Map<String,Object> response = new HashMap<>();
+
+		//*Validate errors
+		if(result.hasErrors())
+		{
+			//*List declaration
+			List<String> errors = new ArrayList<>();
+			//*Get errors and add to list
+			for(FieldError err : result.getFieldErrors())
+			{
+				errors.add("Field '"+err.getField()+"' "+err.getDefaultMessage());
+			}
+					
+			//*Add errors list to response map
+			response.put("errors", errors);
+			//*Return response
+			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
+		}
+		
+		try 
+		{
+			//*Save user in database and add user in the object
+			String passwordBcrypt = passwordEncoder.encode(user.getPassword());
+			newUser = userService.save(user);		
+		}
+		catch(DataAccessException e)
+		{
+			//*Response database error
+			response.put("message","Error inserting into database");
+			response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		//*Created user response
+		response.put("message", "The user has been created");
+		response.put("user", newUser);
+		return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
+	}
+
+	@PostMapping("/users/register")
+	public ResponseEntity<?> register(@Valid @RequestBody User user,BindingResult result)
+	{
+		//*Objects declaration
+		User newUser = null;
+		Role role = null;
+		List<Role> roles = null;
+		Map<String,Object> response = new HashMap<>();
+
+		//*Validate errors
+		if(result.hasErrors())
+		{
+			//*List declaration
+			List<String> errors = new ArrayList<>();
+			//*Get errors and add to list
+			for(FieldError err : result.getFieldErrors())
+			{
+				errors.add("Field '"+err.getField()+"' "+err.getDefaultMessage());
+			}
+
+			//*Add errors list to response map
+			response.put("errors", errors);
+			//*Return response
+			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
+		}
+
+		try
+		{
+			//*Save user in database and add user in the object
+			String passwordBcrypt = passwordEncoder.encode(user.getPassword());
+
+			//*Get role
+			//role.
+			user.setPorfileimageRoute("defaultprofile.png");
+			user.setPassword(passwordBcrypt);
+			role = roleService.findRolesByType("ROLE_USER");
+			roles.add(role);
+			user.setRoles(roles);
+			newUser = userService.save(user);
+		}
+		catch(DataAccessException e)
+		{
+			//*Response database error
+			response.put("message","Error inserting into database");
+			response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		//*Created user response
+		response.put("message", "The user has been created");
+		response.put("user", newUser);
+		return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
+	}
+
+
 
 	//*Url route
 	@PutMapping("/users/{id}")

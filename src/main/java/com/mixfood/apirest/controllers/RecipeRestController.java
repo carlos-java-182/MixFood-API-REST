@@ -338,6 +338,7 @@ public class RecipeRestController
      * @param idUser
      * @return
      */
+    @Secured("ROLE_USER")
     @DeleteMapping("recipes/{idRecipe}/like/{idUser}")
     public ResponseEntity<?> deleteLike(@PathVariable int idRecipe, @PathVariable int idUser)
     {
@@ -409,6 +410,7 @@ public class RecipeRestController
         return new ResponseEntity<Map<String,Object>>(response,HttpStatus.OK);
     }
     //Find like
+    @Secured("ROLE_USER")
     @GetMapping("recipes/{idRecipe}/like/{idUser}")
     public ResponseEntity<?> showLike(@PathVariable int idRecipe, @PathVariable int idUser)
     {
@@ -444,6 +446,7 @@ public class RecipeRestController
      * @param result
      * @return: this return a message with response status
      */
+    @Secured("ROLE_USER")
     @PostMapping("recipes/ingredients")
     public ResponseEntity<?> createIngredients(@Valid @RequestBody List<RecipeIngredient> recipeIngredients, BindingResult result)
     {
@@ -494,6 +497,7 @@ public class RecipeRestController
      * @param result
      * @return
      */
+    @Secured("ROLE_USER")
     @PutMapping("recipes/ingredients")
     public ResponseEntity<?> updateIngredients(@Valid @RequestBody List<RecipeIngredient> recipeIngredients, BindingResult result)
     {
@@ -542,6 +546,7 @@ public class RecipeRestController
         return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
     }
 
+    @Secured("ROLE_USER")
     @DeleteMapping("recipes/ingredients/{id}")
     public ResponseEntity<?> deleteIngredients(@PathVariable int id)
     {
@@ -568,12 +573,12 @@ public class RecipeRestController
     }
 
     //*Url route
+    @Secured("ROLE_USER")
     @PutMapping("/recipes/views/{idRecipe}/user/{idUser}")
     public ResponseEntity<?> updateView( @PathVariable int idRecipe, @PathVariable int idUser)
     {
         //*Find tag
         Recipe actualRecipe = recipeService.findById(idRecipe);
-
         //*Create objects
         Recipe updatedRecipe = null;
         Map<String,Object> response = new HashMap<>();
@@ -636,6 +641,7 @@ public class RecipeRestController
     }
 
     //*Url route
+    @Secured("ROLE_USER")
     @GetMapping("/recipes/edit/{id}")
     public ResponseEntity<?> showEdit(@PathVariable int id)
     {
