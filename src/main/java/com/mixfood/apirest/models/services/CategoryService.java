@@ -17,11 +17,13 @@ public interface CategoryService
     public void delete(int id);
     public List<CategoryCard> findAllForCards();
     public Page<CategoryList> findListLimit(Pageable pageable);
-
     public List<CategoryList> findAllList();
-
     public List<CategoryList> findListByIdUser(int id, Pageable pageable);
     public CategoryName findNameById(int id);
     public Page<CategoryCard> findAllCards(Pageable pageable);
+    public Page<Category> findAllPaginate(Pageable pageable);
+    public Page<Category> findPaginateByLikeName(String term, Pageable pageable);
+    public Category findByName(String name);
+
 
 }

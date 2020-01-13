@@ -29,6 +29,14 @@ public interface TagService
 
 	public Page<TagShort> findALLTrendings(Pageable pageable);
 
+	public Page<Tag> findAllPaginate(Pageable pageable);
+
+	public Page<Tag> findPaginateByLikeName(String term, Pageable pageable);
+
+	public Tag findByName(String name);
+
+
+
 
 
 }

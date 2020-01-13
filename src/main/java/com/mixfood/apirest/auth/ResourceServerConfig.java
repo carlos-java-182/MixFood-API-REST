@@ -32,11 +32,11 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter
                 "/api/followers/**",
                 //Temporal
                 "/api/ingredients/**",
-                //Temporal
+                //Tempora
                 "/api/users/**").permitAll()
-                .antMatchers(HttpMethod.POST,"/api/users/register","/api/ingredients/**").permitAll()
-                .antMatchers(HttpMethod.DELETE,"/api/users/register","/api/ingredients/**").permitAll()
-                .antMatchers(HttpMethod.PUT,"/api/users/register","/api/ingredients/**").permitAll().anyRequest().authenticated();
+                .antMatchers(HttpMethod.POST,"/api/users/register","/api/ingredients/**","/api/tags/**").permitAll()
+                .antMatchers(HttpMethod.DELETE,"/api/users/register","/api/ingredients/**","/api/tags/**").permitAll()
+                .antMatchers(HttpMethod.PUT,"/api/users/register","/api/ingredients/**","/api/tags/**").permitAll().anyRequest().authenticated();
 //                .antMatchers(HttpMethod.GET,"/api/users/{id}").hasRole("ADMIN")
 //                .antMatchers(HttpMethod.POST,"/api/recipes/").hasRole("USER")
 

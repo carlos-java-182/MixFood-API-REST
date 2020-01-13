@@ -123,6 +123,7 @@ public class TagRestController
 	{
 		//*Objects declaration
 		Tag newTag = null;
+		Tag actualTag = null;
 		Map<String,Object> response = new HashMap<>();
 
 		//*Validate errors
@@ -142,6 +143,14 @@ public class TagRestController
 			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
 		}
 
+		actualTag = tagService.findByName(tag.getName());
+
+		if(actualTag != null)
+		{
+			response.put("message","This ingredient already exists.");
+			return new ResponseEntity<Map<String,Object>>(response,HttpStatus.NOT_FOUND);
+		}
+
 		try
 		{
 			//*Save user in database and add user in the object
@@ -156,7 +165,7 @@ public class TagRestController
 		}
 
 		//*Created user response
-		response.put("message", "The user has been created");
+		response.put("message", "The tag has been created");
 		response.put("tag", newTag);
 		return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
 	}
@@ -169,6 +178,7 @@ public class TagRestController
 		Tag actualTag = tagService.findById(id);
 		//*Create objects
 		Tag updatedTag = null;
+		Tag extistTag = null;
 		Map<String,Object> response = new HashMap<>();
 
 		//*Validate errors
@@ -195,6 +205,13 @@ public class TagRestController
 			response.put("message","ID: ".concat(String.valueOf(id).concat(" does not exist!")));
 			//*Return response with http status
 			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+		}
+
+		extistTag = tagService.findByName(tag.getName());
+		if(extistTag != null)
+		{
+			response.put("message","This ingredient already exists.");
+			return new ResponseEntity<Map<String,Object>>(response,HttpStatus.NOT_FOUND);
 		}
 
 		try
@@ -224,7 +241,52 @@ public class TagRestController
 		return new ResponseEntity<Tag>(updatedTag,HttpStatus.CREATED);
 	}
 
+	@GetMapping("/tags/page/{page}/items/{items}")
+	public ResponseEntity<?> showPages(@PathVariable int page, @PathVariable int items)
+	{
+		//*Objects declaration
+		Page<Tag> tags;
+		Map<String,Object> response = new HashMap<>();
 
+		try
+		{
+			Pageable pageable = PageRequest.of(page,items);
+			//*Find ingredients and save in object recipes
+			tags = tagService.findAllPaginate(pageable);
+		}
+		catch(DataAccessException e)
+		{
+			//*Response database error
+			response.put("message","Error consulting database");
+			response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		return new ResponseEntity<Page<Tag>>(tags,HttpStatus.OK);
+	}
+
+	@GetMapping("/tags/page/{page}/items/{items}/term/{term}")
+	public ResponseEntity<?> showPagesByTerm(@PathVariable int page, @PathVariable int items, @PathVariable String term)
+	{
+		//*Objects declaration
+		Page<Tag> tags;
+		Map<String,Object> response = new HashMap<>();
+
+		try
+		{
+			Pageable pageable = PageRequest.of(page,items);
+			//*Find ingredients and save in object recipes
+			tags = tagService.findPaginateByLikeName(term, pageable);
+		}
+		catch(DataAccessException e)
+		{
+			//*Response database error
+			response.put("message","Error consulting database");
+			response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		return new ResponseEntity<Page<Tag>>(tags,HttpStatus.OK);
+	}
 
 	//*Url route
 	@PutMapping("/tags/mention/{id}")

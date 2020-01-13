@@ -33,6 +33,14 @@ public interface CategoryDAO extends CrudRepository<Category,Integer>
     @Query("SELECT c FROM Category c ORDER BY amountRecipes DESC")
     public Page<CategoryCard> findAllCards(Pageable pageable);
 
+    @Query("SELECT c FROM Category  c")
+    public Page<Category> findAllPaginate(Pageable pageable);
+
+    @Query("SELECT c FROM Category c WHERE name LIKE :term%")
+    public Page<Category> findPaginateByLikeName(String term, Pageable pageable);
+
+    @Query("SELECT c FROM Category c WHERE name = :name")
+    public Category findByName(String name);
 
 
 

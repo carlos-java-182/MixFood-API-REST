@@ -1,9 +1,11 @@
 package com.mixfood.apirest.controllers;
 
 import ch.qos.logback.core.rolling.helper.FileNamePattern;
+import com.mixfood.apirest.entity.Category;
 import com.mixfood.apirest.entity.Image;
 import com.mixfood.apirest.entity.Recipe;
 import com.mixfood.apirest.entity.User;
+import com.mixfood.apirest.models.services.CategoryService;
 import com.mixfood.apirest.models.services.ImageService;
 import com.mixfood.apirest.models.services.RecipeService;
 import com.mixfood.apirest.models.services.UserService;
@@ -43,6 +45,8 @@ public class ImageRestController
     private RecipeService recipeService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private CategoryService categoryService;
 
     /**
      **This function
@@ -324,6 +328,63 @@ public class ImageRestController
         //*Created response
         response.put("message", "The image has been removed");
         return new ResponseEntity<Map<String,Object>>(response,HttpStatus.OK);
+    }
+
+    @PostMapping("images/uploads/categories")
+    public ResponseEntity<?> updateImageCategory(@RequestParam("file") MultipartFile file, @RequestParam("id") int id)
+    {
+        //*Variables delcaration
+        String oldImage = "";
+        //*Object declaration
+        Map<String,Object> response = new HashMap<>();
+        Category category = null;
+        category = categoryService.findById(id);
+
+        if(category == null)
+        {
+            response.put("message","ID: ".concat(String.valueOf(id).concat(" not found!")));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+        }
+
+        String fileType = "."+file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".")+1);
+        //*Create unique file name
+        String fileName = "CategoryImage_"+UUID.randomUUID().toString()+fileType;
+        //*Create file route
+        Path fileRoute = Paths.get("uploads/users").resolve(fileName).toAbsolutePath();
+
+        try
+        {
+            Files.copy(file.getInputStream(),fileRoute);
+        }
+        catch (IOException e) {
+            //*Response database error
+            response.put("message","Error updating image from database!");
+            response.put("error",e.getMessage().concat(" : ").concat(e.getCause().getMessage()));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        //*Remove image
+            //*Get image route
+            oldImage = category.getThumbRoute();
+            //*Get absolute path image
+            Path oldFileRoute = Paths.get("uploads/categories").resolve(oldImage).toAbsolutePath();
+            //*Convert path to file
+            File oldFile = oldFileRoute.toFile();
+
+            if(oldFile.exists() && oldFile.canRead())
+            {
+                oldFile.delete();
+            }
+
+
+        //*Create Object image
+        category.setThumbRoute(fileName);
+        categoryService.save(category);
+
+        response.put("message","update image success!");
+        response.put("imageRoute",fileName);
+
+        return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
     }
 
     public enum typeImage

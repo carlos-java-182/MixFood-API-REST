@@ -82,6 +82,15 @@ public class Category implements Serializable
 		this.amountRecipes = amountRecipes;
 	}
 
+	public String getThumbRoute() {
+		return thumbRoute;
+	}
+
+	public void setThumbRoute(String thumbRoute) {
+		this.thumbRoute = thumbRoute;
+	}
+
+
 	/*public List<Recipe> getRecipes() {
 		return recipes;
 	}

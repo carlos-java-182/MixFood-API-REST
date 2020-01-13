@@ -27,7 +27,7 @@ public class Tag implements Serializable
 	@Size(max = 45)
 	@Column(nullable = false, unique = true)
 	private String name;
-	@Column(nullable = false)
+	//@Column(nullable = false)
 	private String thumbRoute;
 	private int mentions;
 	@Column(name="create_at", nullable = false)

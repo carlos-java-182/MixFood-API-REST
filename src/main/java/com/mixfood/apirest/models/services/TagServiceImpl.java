@@ -29,48 +29,71 @@ public class TagServiceImpl implements TagService
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Tag findById(int id)
 	{
 		 return tagDao.findById(id).orElse(null);
 	}
 
 	@Override
-
+	@Transactional
 	public Tag save(Tag tag) 
 	{
 		return tagDao.save(tag);
 	}
 
 	@Override
+	@Transactional
 	public void delete(int id)
 	{
 		tagDao.deleteById(id);
 	}
 
 	@Override
-	public List<TagShort> finAllShort(
-
-	) {
+	@Transactional(readOnly = true)
+	public List<TagShort> finAllShort()
+	{
 		return tagDao.finAllShort();
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<TagShort> findAllByIdRecipe(int id) {
 		return tagDao.findAllByIdRecipe(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Page<TagRecipeCard> findCardsById(int id, Pageable pageable) {
 		return tagDao.findCardsById(id, pageable);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public TagName findNameById(int id) {
 		return tagDao.findNameById(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Page<TagShort> findALLTrendings(Pageable pageable) {
 		return tagDao.findALLTrendings(pageable);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Page<Tag> findAllPaginate(Pageable pageable) {
+		return tagDao.findAllPaginate(pageable);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Page<Tag> findPaginateByLikeName(String term, Pageable pageable) {
+		return tagDao.findPaginateByLikeName(term, pageable);
+	}
+
+	@Override
+	public Tag findByName(String name) {
+		return tagDao.findByName(name);
 	}
 }

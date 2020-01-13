@@ -1,6 +1,7 @@
 package com.mixfood.apirest.controllers;
 
 import com.mixfood.apirest.entity.Category;
+import com.mixfood.apirest.entity.Tag;
 import com.mixfood.apirest.models.services.CategoryService;
 import com.mixfood.apirest.projections.CategoryCard;
 import com.mixfood.apirest.projections.CategoryList;
@@ -30,6 +31,54 @@ public class CategoryRestController
     @Autowired
     //*Object declaration
     private CategoryService categoryService;
+
+
+    @GetMapping("/categories/page/{page}/items/{items}")
+    public ResponseEntity<?> showPages(@PathVariable int page, @PathVariable int items)
+    {
+        //*Objects declaration
+        Page<Category> categories;
+        Map<String,Object> response = new HashMap<>();
+
+        try
+        {
+            Pageable pageable = PageRequest.of(page,items);
+            //*Find ingredients and save in object category
+            categories = categoryService.findAllPaginate(pageable);
+        }
+        catch(DataAccessException e)
+        {
+            //*Response database error
+            response.put("message","Error consulting database");
+            response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity<Page<Category>>(categories,HttpStatus.OK);
+    }
+
+    @GetMapping("categories/page/{page}/items/{items}/term/{term}")
+    public ResponseEntity<?> showPagesByTerm(@PathVariable int page, @PathVariable int items, @PathVariable String term)
+    {
+        //*Objects declaration
+        Page<Category> categories;
+        Map<String,Object> response = new HashMap<>();
+
+        try
+        {
+            Pageable pageable = PageRequest.of(page,items);
+            //*Find ingredients and save in object recipes
+            categories = categoryService.findPaginateByLikeName(term, pageable);
+        }
+        catch(DataAccessException e)
+        {
+            //*Response database error
+            response.put("message","Error consulting database");
+            response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<Page<Category>>(categories,HttpStatus.OK);
+    }
 
     //*Url route
     @GetMapping("/categories")

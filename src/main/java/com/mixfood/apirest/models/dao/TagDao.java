@@ -29,4 +29,15 @@ public interface TagDao extends CrudRepository<Tag,Integer>
 
     @Query("SELECT t FROM Tag t ORDER BY mentions DESC")
     public Page<TagShort> findALLTrendings(Pageable pageable);
+
+    @Query("SELECT t FROM Tag  t")
+    public Page<Tag> findAllPaginate(Pageable pageable);
+
+    @Query("SELECT t FROM Tag t WHERE name LIKE :term%")
+    public Page<Tag> findPaginateByLikeName(String term, Pageable pageable);
+
+    @Query("SELECT t FROM Tag t WHERE name = :name")
+    public Tag findByName(String name);
+
+
 }
