@@ -266,4 +266,14 @@ public class IngredientRestController
         response.put("message", "The ingredient has been removed!");
         return new ResponseEntity<Map<String,Object>>(response,HttpStatus.OK);
     }
+
+    @PostMapping("/ingredients/filter")
+    public  ResponseEntity<?> filter(@RequestBody  List<Ingredient> ids)
+    {
+        //*Object declaration
+        Map<String,Object> response = new HashMap<>();
+        System.out.println(ids);
+        response.put("message", "The ingredient has been removed!");
+        return new ResponseEntity<Map<String,Object>>(response,HttpStatus.OK);
+    }
 }

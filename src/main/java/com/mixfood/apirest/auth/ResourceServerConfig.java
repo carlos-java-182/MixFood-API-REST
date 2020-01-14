@@ -35,7 +35,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter
                 "/api/users/**",
                 //Tempora
                 "/api/users/**").permitAll()
-                .antMatchers(HttpMethod.POST,"/api/users/register","/api/ingredients/**","/api/tags/**","/api/categories/**","/api/images/**","/api/users/**").permitAll()
+                .antMatchers(HttpMethod.POST,"/api/users/register","/api/ingredients/**","/api/tags/**","/api/categories/**","/api/images/**","/api/users/**","/api/ingredients/filter").permitAll()
                 .antMatchers(HttpMethod.DELETE,"/api/users/register","/api/ingredients/**","/api/tags/**","/api/images/**","/api/users/**").permitAll()
                 .antMatchers(HttpMethod.PUT,"/api/users/register","/api/ingredients/**","/api/tags/**","/api/users/**").permitAll().anyRequest().authenticated();
 //                .antMatchers(HttpMethod.GET,"/api/users/{id}").hasRole("ADMIN")
