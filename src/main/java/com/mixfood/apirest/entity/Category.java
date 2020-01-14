@@ -22,7 +22,10 @@ public class Category implements Serializable
 	@Column(nullable = false, unique = true)
 	private String name;
 	private String thumbRoute;
+
+	@Column(columnDefinition = "bigint default 0")
 	private long amountRecipes;
+
 	@Temporal(TemporalType.DATE)
 	private Date createAt;
 	@PrePersist

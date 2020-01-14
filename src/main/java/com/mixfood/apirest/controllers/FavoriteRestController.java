@@ -15,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -48,6 +49,23 @@ public class FavoriteRestController {
     {
         Pageable pageable = PageRequest.of(page,items);
         return favoriteService.findAllByIdUser(id,pageable);
+    }
+
+    @Secured("ROLE_USER")
+    @GetMapping("favorites/validate/recipe/{idRecipe}/user/{idUser}")
+    public ResponseEntity<?> validate(@PathVariable int idRecipe, @PathVariable int idUser)
+    {
+        FavoriteId favorite = null;
+        favorite = favoriteService.findIdbyIdUserAndIdRecipe(idUser,idRecipe);
+        Map<String,Object> response = new HashMap<>();
+        if(favorite != null)
+        {
+            response.put("message","This favorite already exists.");
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+        }
+
+        response.put("message", "The favorite not exist");
+        return new ResponseEntity<Map<String,Object>>(response,HttpStatus.OK);
     }
 
 

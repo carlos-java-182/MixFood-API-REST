@@ -5,6 +5,8 @@ import java.util.List;
 import com.mixfood.apirest.entity.User;
 import com.mixfood.apirest.projections.UserEmail;
 import com.mixfood.apirest.projections.UserInformation;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface UserService
 {
@@ -29,6 +31,7 @@ public interface UserService
 
     public User findByEmail(String email);
 
-
+    public Page<User> findAllPaginate(Pageable pageable,Boolean enabled);
+    public Page<User> findPaginateByLikeName(String term, Boolean enabled, Pageable pageable);
 
 }

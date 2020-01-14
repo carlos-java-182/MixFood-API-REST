@@ -19,7 +19,6 @@ public class FavoriteServiceImpl implements FavoriteService
     @Autowired
     private FavoriteDAO favoriteDAO;
 
-
     @Override
     @Transactional(readOnly = true)
     public Page<FavoriteCard> findAllByIdUser(int id, Pageable pageable)
@@ -34,7 +33,7 @@ public class FavoriteServiceImpl implements FavoriteService
     }
 
     @Override
-
+    @Transactional
     public void delete(int id) {
         favoriteDAO.deleteById(id);
     }
@@ -45,5 +44,9 @@ public class FavoriteServiceImpl implements FavoriteService
         return favoriteDAO.findIdbyIdUserAndIdRecipe(idUser,idRecipe);
     }
 
-
+    @Override
+    @Transactional(readOnly = true)
+    public Favorite findById(int id) {
+        return favoriteDAO.findById(id).orElse(null);
+    }
 }

@@ -7,6 +7,8 @@ import com.mixfood.apirest.projections.UserEmail;
 import com.mixfood.apirest.projections.UserInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -53,6 +55,7 @@ public class UserServiceImpl implements UserService, UserDetailsService
 	}
 
 	@Override
+	@Transactional
 	public void delete(int id) 
 	{
 		userDao.deleteById(id);
@@ -72,11 +75,13 @@ public class UserServiceImpl implements UserService, UserDetailsService
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public UserInformation findInformationById(int id) {
 		return userDao.findInformationById(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public UserEmail findEmailById(int id)
 	{
 		return userDao.findEmailById(id);
@@ -86,6 +91,18 @@ public class UserServiceImpl implements UserService, UserDetailsService
 	@Transactional(readOnly = true)
 	public User findByEmail(String email) {
 		return userDao.findByEmail(email);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Page<User> findAllPaginate(Pageable pageable,Boolean status) {
+		return userDao.findAllPaginate(pageable,status);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Page<User> findPaginateByLikeName(String term,Boolean status, Pageable pageable) {
+		return userDao.findPaginateByLikeName(term,status, pageable);
 	}
 
 

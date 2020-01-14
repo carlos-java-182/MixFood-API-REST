@@ -23,6 +23,9 @@ import com.mixfood.apirest.projections.UserInformation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -476,6 +479,7 @@ public class UserRestController
 	{
 		//*Objects declaration
 		User newUser = null;
+		User userEmail = null;
 		Role role = null;
 		List<Role> roles = null;
 		Map<String,Object> response = new HashMap<>();
@@ -495,6 +499,13 @@ public class UserRestController
 			response.put("errors", errors);
 			//*Return response
 			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
+		}
+
+		userEmail = userService.findByEmail(user.getEmail());
+		if(userEmail != null)
+		{
+			response.put("message","The email is already in use");
+			return new ResponseEntity<Map<String,Object>>(response,HttpStatus.NOT_FOUND);
 		}
 
 		try
@@ -566,13 +577,18 @@ public class UserRestController
 		try 
 		{
 			//*Add new user data to actual user
+			if(!user.getPassword().equals("null"))
+			{
+				String passwordBcrypt = passwordEncoder.encode(user.getPassword());
+				actualUser.setPassword(passwordBcrypt);
+			}
+
 			actualUser.setName(user.getName());
 			actualUser.setLastname(user.getLastname());
 			actualUser.setStatus(user.getStatus());
 			actualUser.setDescription(user.getDescription());
 			actualUser.setPorfileimageRoute(user.getPorfileimageRoute());
 			actualUser.setGender(user.getGender());
-		
 			//*Update user
 			updatedUser = userService.save(actualUser);
 		}
@@ -597,12 +613,16 @@ public class UserRestController
 	public ResponseEntity<?> delete(@PathVariable int id)
 	{
 		//*Object declaration
+		User actualUser = null;
 		Map<String,Object> response = new HashMap<>();
-		
+
+		actualUser = userService.findById(id);
 		try
 		{
 			//*Delete user
-			userService.delete(id);
+			actualUser.setEnabled(false);
+			userService.save(actualUser);
+			//userService.delete(id);
 		}
 		catch(DataAccessException e)
 		{
@@ -645,5 +665,54 @@ public class UserRestController
 			response.put("message","upload success!");
 		}
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
+	}
+
+
+
+	@GetMapping("/users/enabled/{enabled}/page/{page}/items/{items}")
+	public ResponseEntity<?> showPages(@PathVariable int page,@PathVariable Boolean enabled, @PathVariable int items)
+	{
+		//*Objects declaration
+		Page<User> users;
+		Map<String,Object> response = new HashMap<>();
+
+		try
+		{
+			Pageable pageable = PageRequest.of(page,items);
+			//*Find ingredients and save in object recipes
+			users = userService.findAllPaginate(pageable, enabled);
+		}
+		catch(DataAccessException e)
+		{
+			//*Response database error
+			response.put("message","Error consulting database");
+			response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		return new ResponseEntity<Page<User>>(users,HttpStatus.OK);
+	}
+
+	@GetMapping("/users/enabled/{enabled}/page/{page}/items/{items}/term/{term}")
+	public ResponseEntity<?> showPagesByTerm(@PathVariable int page, @PathVariable int items,@PathVariable boolean enabled, @PathVariable String term)
+	{
+		//*Objects declaration
+		Page<User> users;
+		Map<String,Object> response = new HashMap<>();
+
+		try
+		{
+			Pageable pageable = PageRequest.of(page,items);
+			//*Find ingredients and save in object recipes
+			users = userService.findPaginateByLikeName(term, enabled, pageable);
+		}
+		catch(DataAccessException e)
+		{
+			//*Response database error
+			response.put("message","Error consulting database");
+			response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		return new ResponseEntity<Page<User>>(users,HttpStatus.OK);
 	}
 }

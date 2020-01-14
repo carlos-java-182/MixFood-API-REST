@@ -44,7 +44,7 @@ public class User implements Serializable
 	@NotEmpty
 	@Column(length = 60)
 	private String password;
-	@NotEmpty
+	//@NotEmpty
 
 	//@NotEmpty
 	@Column(length = 6)
@@ -63,10 +63,10 @@ public class User implements Serializable
 	@Type(type = "date")
 	@Temporal(TemporalType.DATE)
 	private Date dateBirth;
-	@NotEmpty
+	//@NotEmpty
 	private String country;
 
-	@Column(columnDefinition = "BOOLEAN default false")
+	@Column(columnDefinition = "BOOLEAN default true")
 	private Boolean enabled;
 
 	//@NotEmpty

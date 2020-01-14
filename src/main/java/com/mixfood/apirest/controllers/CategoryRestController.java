@@ -1,7 +1,6 @@
 package com.mixfood.apirest.controllers;
 
 import com.mixfood.apirest.entity.Category;
-import com.mixfood.apirest.entity.Tag;
 import com.mixfood.apirest.models.services.CategoryService;
 import com.mixfood.apirest.projections.CategoryCard;
 import com.mixfood.apirest.projections.CategoryList;
@@ -178,6 +177,7 @@ public class CategoryRestController
     {
         //*Objects declaration
         Category newCategory = null;
+        Category actuaCategory = null;
         Map<String,Object> response = new HashMap<>();
 
         //*Validate errors
@@ -197,6 +197,13 @@ public class CategoryRestController
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
         }
 
+        actuaCategory = categoryService.findByName(category.getName());
+        if(actuaCategory != null)
+        {
+            response.put("message","This ingredient already exists.");
+            return new ResponseEntity<Map<String,Object>>(response,HttpStatus.NOT_FOUND);
+        }
+
         try
         {
             //*Save user in database and add user in the object
@@ -212,7 +219,7 @@ public class CategoryRestController
 
         //*Created user response
         response.put("message", "The category has been created");
-        response.put("category", newCategory);
+        response.put("id", newCategory.getId());
         return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
     }
 
@@ -224,6 +231,7 @@ public class CategoryRestController
         Category actualCategory = categoryService.findById(id);
         //*Create objects
         Category updatedCategory = null;
+        Category existsCategory = null;
         Map<String,Object> response = new HashMap<>();
 
         //*Validate errors
@@ -250,6 +258,14 @@ public class CategoryRestController
             response.put("message","ID: ".concat(String.valueOf(id).concat(" does not exist!")));
             //*Return response with http status
             return new ResponseEntity<Map<String,Object>>(response, HttpStatus.NOT_FOUND);
+        }
+
+
+        existsCategory = categoryService.findByName(category.getName());
+        if(existsCategory != null)
+        {
+            response.put("message","This ingredient already exists.");
+            return new ResponseEntity<Map<String,Object>>(response,HttpStatus.NOT_FOUND);
         }
 
         try

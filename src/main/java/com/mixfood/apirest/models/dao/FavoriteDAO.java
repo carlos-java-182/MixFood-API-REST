@@ -22,4 +22,5 @@ public interface FavoriteDAO extends CrudRepository<Favorite,Integer>
     @Query("SELECT f FROM Favorite f WHERE user_id = :idUser AND recipe_id = :idRecipe")
     public FavoriteId findIdbyIdUserAndIdRecipe(int idUser, int idRecipe);
 
+
 }

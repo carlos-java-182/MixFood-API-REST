@@ -333,6 +333,7 @@ public class ImageRestController
     @PostMapping("images/uploads/categories")
     public ResponseEntity<?> updateImageCategory(@RequestParam("file") MultipartFile file, @RequestParam("id") int id)
     {
+        System.out.println("HERE!!!");
         //*Variables delcaration
         String oldImage = "";
         //*Object declaration
@@ -350,7 +351,7 @@ public class ImageRestController
         //*Create unique file name
         String fileName = "CategoryImage_"+UUID.randomUUID().toString()+fileType;
         //*Create file route
-        Path fileRoute = Paths.get("uploads/users").resolve(fileName).toAbsolutePath();
+        Path fileRoute = Paths.get("uploads/categories").resolve(fileName).toAbsolutePath();
 
         try
         {
@@ -365,7 +366,10 @@ public class ImageRestController
 
         //*Remove image
             //*Get image route
-            oldImage = category.getThumbRoute();
+        oldImage = category.getThumbRoute();
+        System.out.println("IMAGE: "+ category.getThumbRoute());
+        if(category.getThumbRoute() != null)
+        {
             //*Get absolute path image
             Path oldFileRoute = Paths.get("uploads/categories").resolve(oldImage).toAbsolutePath();
             //*Convert path to file
@@ -375,6 +379,7 @@ public class ImageRestController
             {
                 oldFile.delete();
             }
+        }
 
 
         //*Create Object image
