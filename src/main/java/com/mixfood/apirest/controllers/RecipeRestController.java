@@ -606,6 +606,36 @@ public class RecipeRestController
         return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
     }
 
+    @Secured("ROLE_USER")
+    @GetMapping("/recipes/validate/recipe/{idRecipe}/user/{idUser}")
+    public ResponseEntity<?> validateRecipeUser(@PathVariable int idUser, @PathVariable int idRecipe)
+    {
+        Recipe recipe = null;
+        System.out.println("HEREEEE");
+        Map<String,Object> response = new HashMap<>();
+        try
+        {
+            //*Find user and save in object user
+            recipe = recipeService.FindByIdUserAndIdRecipe(idUser,idRecipe);
+
+            if(recipe == null)
+            {
+                response.put("message","Valid");
+                return  new ResponseEntity<Map<String,Object>>(response,HttpStatus.OK);
+            }
+
+        }
+        catch(DataAccessException e)
+        {
+            //*Response database error
+            response.put("message","Error consulting database");
+            response.put("error",e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        response.put("message","No valid");
+        return  new ResponseEntity<Map<String,Object>>(response,HttpStatus.NOT_FOUND);
+    }
+
     //*Url route
     @GetMapping("/recipes/{id}")
     public ResponseEntity<?> show(@PathVariable int id)

@@ -106,4 +106,9 @@ public class RecipeServiceImpl implements  RecipeService
     public RecipeEdit findEditById(int id) {
         return recipeDAO.findEditById(id);
     }
+
+    @Override
+    public Recipe FindByIdUserAndIdRecipe(int idUser, int idRecipe) {
+        return recipeDAO.FindByIdUserAndIdRecipe(idUser,idRecipe);
+    }
 }
