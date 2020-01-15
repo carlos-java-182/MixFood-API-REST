@@ -1,7 +1,6 @@
 package com.mixfood.apirest.models.services;
 
 import com.mixfood.apirest.entity.Ingredient;
-import javafx.scene.control.Pagination;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

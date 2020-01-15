@@ -2,7 +2,6 @@ package com.mixfood.apirest.models.services;
 
 import com.mixfood.apirest.entity.Ingredient;
 import com.mixfood.apirest.models.dao.IngredientDAO;
-import javafx.scene.control.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
