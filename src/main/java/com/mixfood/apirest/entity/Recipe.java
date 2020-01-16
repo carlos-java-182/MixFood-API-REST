@@ -108,6 +108,7 @@ public class Recipe implements Serializable
 	private List<Image> images = new ArrayList<Image>();
 
 	@OneToMany(mappedBy = "recipe")
+
 	private List<RecipeIngredient> recipeIngredients = new ArrayList<>();
 
 	@OneToMany(mappedBy = "recipe")

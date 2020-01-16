@@ -30,10 +30,16 @@ public class RecipeIngredient implements Serializable
     //*Relationships
 
     //@JsonIgnoreProperties({"hibernateLazyInitializer", "recipe"})
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recipe_id", nullable = false)
+
     private Recipe recipe;
 
+    public Recipe getRecipe() {
+
+        return recipe;
+    }
 
     //@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     //JsonIgnoreProperties("movie")

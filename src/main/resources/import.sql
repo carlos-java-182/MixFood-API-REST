@@ -29,13 +29,13 @@ INSERT INTO favorites (`id_favorite`, `create_at`, `recipe_id`, `user_id`) VALUE
 INSERT INTO followers (`id_follower`, `create_at`, `follower_id`, `user_id`) VALUES ('0', '2019-12-12', '2', '1');
 
 INSERT INTO users (`id_user`, `create_at`, `description`, `email`, `gender`, `lastname`, `name`, `password`, `porfileimage_route`, `status`, `date_birth`, `country`, `enabled`)
-VALUES ('1', '2020-01-01', 'Hello! I am york and i am a user', 'york@mixfood.com', 'M', 'Gonzalez', 'Jorge', '123', 'default.png', 'active', '1994-11-09', 'Mexico', '1');
+VALUES ('1', '2020-01-01', 'Hello! I am york and i am a user', 'york@mixfood.com', 'M', 'Gonzalez', 'Jorge', '$2a$10$HuW6eN1Xa41t7Szkb22dH.NymlPYOI7DrUB7SbQya6cvcjFKg.LZ.', 'default.png', 'active', '1994-11-09', 'Mexico', '1');
 
 INSERT INTO users (`id_user`, `create_at`, `description`, `email`, `gender`, `lastname`, `name`, `password`, `porfileimage_route`, `status`, `date_birth`, `country`, `enabled`)
-VALUES ('2', '2020-01-01', 'Hello! I am carlos and i am a user', 'carlos@mixfood.com', 'M', 'Villasenor', 'Carlos', '123', 'default.png', 'active', '1994-11-09', 'Mexico', '1');
+VALUES ('2', '2020-01-01', 'Hello! I am carlos and i am a user', 'carlos@mixfood.com', 'M', 'Villasenor', 'Carlos', '$2a$10$HuW6eN1Xa41t7Szkb22dH.NymlPYOI7DrUB7SbQya6cvcjFKg.LZ.', 'default.png', 'active', '1994-11-09', 'Mexico', '1');
 
 INSERT INTO users (`id_user`, `create_at`, `description`, `email`, `gender`, `lastname`, `name`, `password`, `porfileimage_route`, `status`, `date_birth`, `country`, `enabled`)
-VALUES ('3', '2020-01-01', 'Hello! I am edgar and i am a user', 'edgar@mixfood.com', 'M', 'Lara', 'Edgar', '123', 'default.png', 'active', '1994-11-09', 'Mexico', '1');
+VALUES ('3', '2020-01-01', 'Hello! I am edgar and i am a user', 'edgar@mixfood.com', 'M', 'Lara', 'Edgar', '$2a$10$HuW6eN1Xa41t7Szkb22dH.NymlPYOI7DrUB7SbQya6cvcjFKg.LZ.', 'default.png', 'active', '1994-11-09', 'Mexico', '1');
 
 
 
