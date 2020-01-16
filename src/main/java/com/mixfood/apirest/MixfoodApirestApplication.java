@@ -18,7 +18,7 @@ public class MixfoodApirestApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception
 	{
-		String password = "123456";
+		String password = "password";
 		String passwordBcrypt = passwordEncoder.encode(password);
 		System.out.println("PASS:  "+ passwordBcrypt);
 	}

@@ -18,4 +18,5 @@ public interface IngredientService {
     public Page<Ingredient> findAllPaginate(Pageable pageable);
     public Page<Ingredient> findPaginateByLikeName(String term, Pageable pageable);
     public Ingredient findByName(String name);
+
 }

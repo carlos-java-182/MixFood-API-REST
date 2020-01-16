@@ -1,6 +1,7 @@
 package com.mixfood.apirest.controllers;
 
 import com.mixfood.apirest.entity.Ingredient;
+import com.mixfood.apirest.models.dao.RecipeIngredientDAO;
 import com.mixfood.apirest.models.services.IngredientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -28,7 +29,8 @@ public class IngredientRestController
     @Autowired
     //*Declare object
     private IngredientService ingredientService;
-
+    @Autowired
+    private RecipeIngredientDAO recipeIngredientDAO;
     //*Url route
     @GetMapping("/ingredients")
     public List<Ingredient> index()
@@ -272,7 +274,8 @@ public class IngredientRestController
     {
         //*Object declaration
         Map<String,Object> response = new HashMap<>();
-        System.out.println(ids);
+        //;
+        response.put("results",recipeIngredientDAO.findByIngredients(ids));
         response.put("message", "The ingredient has been removed!");
         return new ResponseEntity<Map<String,Object>>(response,HttpStatus.OK);
     }

@@ -39,8 +39,9 @@ public class RecipeIngredientServiceImpl implements RecipeIngredientService
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public List<RecipeIngredient> findByIngretiends(List ids) {
-        return recipeIngredientDAO.findByIngretiends(ids);
+    public List<RecipeIngredient> findByIngredients(List ids) {
+        return recipeIngredientDAO.findByIngredients(ids);
     }
+
+
 }

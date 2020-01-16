@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface RecipeIngredientDAO extends CrudRepository<RecipeIngredient,Integer>
 {
-    @Query("SELECT ri FROM RecipeIngredient ri WHERE ingredient_id IN :ids")
-    public  List<RecipeIngredient> findByIngretiends(List ids);
+    @Query("SELECT DISTINCT ri FROM RecipeIngredient ri WHERE ingredient_id IN :ids")
+    public  List<RecipeIngredient> findByIngredients(List ids);
 }
